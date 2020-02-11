@@ -53,12 +53,14 @@ def main():
         cv = PandocToPDFConverter(src=src,
                                   tgt=fd.name,
                                   filters=filters)
-        cv.convert()
-        thread_viewer = threading.Thread(
-            target=lambda: subprocess.run(f"{conf['pdf_viewer']} {cv.tgt} > /dev/null 2>&1",
-                                          shell=True,
-                                          check=True)
-            )
+
+        def viewer_target():
+            cv.convert()
+            subprocess.run(f"{conf['pdf_viewer']} {cv.tgt} > /dev/null 2>&1",
+                           shell=True,
+                           check=True)
+
+        thread_viewer = threading.Thread(target=viewer_target)
         thread_viewer.start()
 
         def wait_target():
