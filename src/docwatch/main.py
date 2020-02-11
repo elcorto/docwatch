@@ -24,7 +24,7 @@ def get_mtime(fn):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('source_file')
-    parser.add_argument('-e', '--with-editor', action='store_true')
+    parser.add_argument('--no-editor', action='store_true')
     args = parser.parse_args()
 
     if os.path.exists(conf_fn):
@@ -88,9 +88,9 @@ def main():
         # blocks the Python process as long as vim runs and fills the terminal
         # in which we started this script. Yeah!
         #
-        if args.with_editor:
+        if args.no_editor:
+            wait_target()
+        else:
             thread_wait = threading.Thread(target=wait_target)
             thread_wait.start()
             subprocess.run(f"{conf['editor']} {cv.src}", shell=True, check=True)
-        else:
-            wait_target()

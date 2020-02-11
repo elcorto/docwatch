@@ -8,16 +8,11 @@ config file `$HOME/.config/docwatch.conf`.
 Usage
 =====
 
-This will open the built PDF in a viewer.
+This will open `foo.md` in your text editor, as well as the built PDF in a
+viewer application.
 
 ```sh
 $ docwatch foo.md
-```
-
-Aditionally, open `foo.md` in your text editor.
-
-```sh
-$ docwatch -e foo.md
 ```
 
 If the source file `foo.md` doesn't exist, it will be created. Logs are written
