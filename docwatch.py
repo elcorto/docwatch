@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import os
 import shlex
 import subprocess
@@ -34,24 +35,38 @@ class PandocConverter:
 
 
 class Markdown2PDFConverter(PandocConverter):
-    options = '-V documentclass=scrartcl -V pagesize=a4'
+    options = '-V documentclass=scrartcl \
+               -V pagesize=a4 \
+               -V colorliks \
+               -V linkcolor=green \
+               -V urlcolor=blue \
+               '
     filters = ['/home/elcorto/soft/git/pandocfilters/examples/gitlab_markdown.py']
     tgt_ext = 'pdf'
 
 
 if __name__ == '__main__':
-    src = sys.argv[1]
+    parser = argparse.ArgumentParser(description='foo')
+    parser.add_argument('source_file')
+    parser.add_argument('-e', '--with-editor', action='store_true')
+    args = parser.parse_args()
 
     with tempfile.NamedTemporaryFile(suffix='.pdf') as fd:
-        cv = Markdown2PDFConverter(src=src, tgt=fd.name)
+        cv = Markdown2PDFConverter(src=args.source_file, tgt=fd.name)
         cv.convert()
-        thread = threading.Thread(
+        threads = {}
+        threads['viewer'] = threading.Thread(
             target=lambda: subprocess.run(f"xdg-open {cv.tgt} > /dev/null 2>&1", shell=True)
             )
-        thread.start()
-        mtime = get_mtime(src)
-        while thread.is_alive():
-            this_mtime = get_mtime(src)
+        if args.with_editor:
+            threads['editor'] = threading.Thread(
+                target=lambda: subprocess.run(f"xvim {cv.src} > /dev/null 2>&1", shell=True)
+                )
+        for thr in threads.values():
+            thr.start()
+        mtime = get_mtime(cv.src)
+        while threads['viewer'].is_alive():
+            this_mtime = get_mtime(cv.src)
             if this_mtime > mtime:
                 mtime = this_mtime
                 cv.convert()
