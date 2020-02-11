@@ -1,5 +1,4 @@
 import argparse
-import copy
 import os
 import subprocess
 import tempfile
@@ -24,8 +23,6 @@ def main():
 
     converter = PandocToPDFConverter
     conf_section = conf[converter.conf_section]
-    filters = [os.path.expanduser(p) for p in
-               conf_section['filters'].strip().split()]
 
     src = os.path.expanduser(args.source_file)
     if not os.path.exists(src):
@@ -40,9 +37,7 @@ def main():
     # instead of what one would expect
     #     pandoc -t pdf
     with tempfile.NamedTemporaryFile(suffix=converter.tgt_ext) as fd:
-        cv = converter(src=src,
-                       tgt=fd.name,
-                       filters=filters)
+        cv = converter(src=src, tgt=fd.name)
 
         def target_viewer():
             # initial convert only

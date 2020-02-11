@@ -21,17 +21,28 @@ to `/tmp/docwatch.log`.
 Example config file
 ===================
 
-```
+```conf
 [DEFAULT]
 
 # When using terminal editors such as vim, we start that in the terminal where
 # the docwatch command was used. Cool, eh? If you skip this setting, the default
 # is $EDITOR.
 editor=vim
+##editor=gvim
+##editor=sublime
 
-# Use the system's default PDF viewer (called through xdg-open), or
-# something like evince (Gnome), okular (KDE), xpdf (you are a 90s person)
 pdf_viewer=xdg-open
+##pdf_viewer=okular
+##pdf_viewer=evince
+##pdf_viewer=xpdf
+
+[pandoc]
+
+# slow, but can deal with weird font situations
+##pdf_engine=xelatex
+
+# pandoc default
+pdf_engine=pdflatex
 
 # pandoc filters, one per line, will be passed as
 #   pandoc -F filter1 -F filter2 ...
@@ -40,7 +51,12 @@ pdf_viewer=xdg-open
 filters=
     /path/to/pandocfilters/examples/gitlab_markdown.py
     pandoc-citeproc
-    pandoc-xnos
+##    pandoc-xnos
+
+# pandoc -V option1 -V option2
+latex_options=
+    geometry:margin=1.5cm
+    pagestyle=empty
 ```
 
 File formats
