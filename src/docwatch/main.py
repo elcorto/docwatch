@@ -1,5 +1,4 @@
 import argparse
-import configparser
 import copy
 import os
 import subprocess
@@ -9,12 +8,7 @@ import time
 
 
 from .converters import PandocToPDFConverter
-
-
-conf_default = {'editor': os.environ.get('EDITOR', 'vim'),
-                'pdf_viewer': 'xdg-open',
-                'filters': []}
-conf_fn = os.path.join(os.environ['HOME'], '.config/docwatch.conf')
+from .conf import conf
 
 
 def get_mtime(fn):
@@ -27,14 +21,7 @@ def main():
     parser.add_argument('--no-editor', action='store_true')
     args = parser.parse_args()
 
-    if os.path.exists(conf_fn):
-        cfp = configparser.ConfigParser()
-        cfp.read(conf_fn)
-        conf = copy.deepcopy(conf_default)
-        conf.update(cfp['DEFAULT'])
-    else:
-        conf = conf_default
-    filters = [os.path.expanduser(p) for p in conf['filters'].strip().split()]
+    filters = [os.path.expanduser(p) for p in conf['pandoc']['filters'].strip().split()]
 
     src = os.path.expanduser(args.source_file)
     if not os.path.exists(src):
@@ -56,7 +43,7 @@ def main():
 
         def viewer_target():
             cv.convert()
-            subprocess.run(f"{conf['pdf_viewer']} {cv.tgt} > /dev/null 2>&1",
+            subprocess.run(f"{conf['DEFAULT']['pdf_viewer']} {cv.tgt} > /dev/null 2>&1",
                            shell=True,
                            check=True)
 
@@ -93,4 +80,4 @@ def main():
         else:
             thread_wait = threading.Thread(target=wait_target)
             thread_wait.start()
-            subprocess.run(f"{conf['editor']} {cv.src}", shell=True, check=True)
+            subprocess.run(f"{conf['DEFAULT']['editor']} {cv.src}", shell=True, check=True)

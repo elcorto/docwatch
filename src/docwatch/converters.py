@@ -1,5 +1,7 @@
 import subprocess
 
+from .conf import conf
+
 
 class PandocConverter:
     # For now pypandoc would be overkill here. Re-visit should we plan to
@@ -24,13 +26,13 @@ class PandocConverter:
 
 # XXX link-citations and citecolor doesn't work
 class PandocToPDFConverter(PandocConverter):
-    options = '-V documentclass=scrartcl \
-               -V pagesize=a4 \
-               -V colorliks \
-               -V linkcolor=red \
-               -V urlcolor=blue \
-               -V citecolor=green \
-               -V link-citations=true \
-               --pdf-engine=xelatex \
-               '
-    tgt_ext = 'pdf'
+    options = f"-V documentclass=scrartcl \
+                -V pagesize=a4 \
+                -V colorliks \
+                -V linkcolor=red \
+                -V urlcolor=blue \
+                -V citecolor=green \
+                -V link-citations=true \
+                --pdf-engine={conf['pandoc']['pdf_engine']} \
+                "
+    tgt_ext = "pdf"
