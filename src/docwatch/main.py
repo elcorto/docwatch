@@ -36,6 +36,12 @@ def main():
         conf = conf_default
     filters = [os.path.expanduser(p) for p in conf['filters'].strip().split()]
 
+    src = os.path.expanduser(args.source_file)
+    if not os.path.exists(src):
+        with open(src, 'w') as fd:
+            fd.write(f"Hi, I'm your new file '{os.path.basename(fd.name)}'. "
+                     f"Delete this line and start hacking.")
+
     # suffix='.pdf' is hard-coded here and relies on cv being an instance of
     # PandocToPDFConverter. We only need to add a suffix here in the PDF case
     # b/c of the quirky pandoc behavior that in order to produce a PDF by
@@ -44,7 +50,7 @@ def main():
     # instead of what one would expect
     #     pandoc -t pdf
     with tempfile.NamedTemporaryFile(suffix='.pdf') as fd:
-        cv = PandocToPDFConverter(src=args.source_file,
+        cv = PandocToPDFConverter(src=src,
                                   tgt=fd.name,
                                   filters=filters)
         cv.convert()
