@@ -6,8 +6,16 @@ file `$HOME/.config/docwatch.conf`.
 
 # Usage
 
+This will open the built PDF in a viewer.
+
 ```sh
-$ docwatch.py foo.md
+$ docwatch foo.md
+```
+
+Open `foo.md` in your text editor (see config file below) as well.
+
+```sh
+$ docwatch -e foo.md
 ```
 
 # Example config file
@@ -37,4 +45,11 @@ diectly to pandoc, as in
 
 ```sh
 $ pandoc [options] -o foo.pdf foo.md
+```
+
+# Install
+
+```sh
+$ git clone ...
+$ pip install -e .
 ```
