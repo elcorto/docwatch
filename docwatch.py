@@ -44,7 +44,8 @@ class Markdown2PDFConverter(PandocConverter):
                -V citecolor=green \
                -V link-citations=true \
                '
-    filters = ['/home/elcorto/soft/git/pandocfilters/examples/gitlab_markdown.py']
+    filters = ['/home/elcorto/soft/git/pandocfilters/examples/gitlab_markdown.py',
+               'pandoc-citeproc']
     tgt_ext = 'pdf'
 
 
