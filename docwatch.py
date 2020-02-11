@@ -50,7 +50,7 @@ class PandocToPDFConverter(PandocConverter):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='foo')
+    parser = argparse.ArgumentParser()
     parser.add_argument('source_file')
     parser.add_argument('-e', '--with-editor', action='store_true')
     args = parser.parse_args()
