@@ -28,7 +28,7 @@ class PandocConverter:
 class PandocToPDFConverter(PandocConverter):
     options = f"-V documentclass=scrartcl \
                 -V pagesize=a4 \
-                -V colorliks \
+                -V colorlinks=true \
                 -V linkcolor=red \
                 -V urlcolor=blue \
                 -V citecolor=green \
