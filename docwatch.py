@@ -37,7 +37,7 @@ class PandocConverter:
 
 
 # XXX link-citations and citecolor doesn't work
-class Markdown2PDFConverter(PandocConverter):
+class PandocToPDFConverter(PandocConverter):
     options = '-V documentclass=scrartcl \
                -V pagesize=a4 \
                -V colorliks \
@@ -66,12 +66,19 @@ if __name__ == '__main__':
         conf.update(cfp['DEFAULT'])
     else:
         conf = conf_default
-
     filters = [os.path.expanduser(p) for p in conf['filters'].strip().split()]
+
+    # suffix='.pdf' is hard-coded here and relies on cv being an instance of
+    # PandocToPDFConverter. We only need to add a suffix here in the PDF case
+    # b/c of the quirky pandoc behavior that in order to produce a PDF by
+    # running latex, we need to use
+    #     pandoc -o foo.pdf
+    # instead of what one would expect
+    #     pandoc -t pdf
     with tempfile.NamedTemporaryFile(suffix='.pdf') as fd:
-        cv = Markdown2PDFConverter(src=args.source_file,
-                                   tgt=fd.name,
-                                   filters=filters)
+        cv = PandocToPDFConverter(src=args.source_file,
+                                  tgt=fd.name,
+                                  filters=filters)
         cv.convert()
         threads = {}
         threads['viewer'] = threading.Thread(
