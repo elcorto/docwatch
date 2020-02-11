@@ -5,6 +5,7 @@ import subprocess
 import tempfile
 import threading
 import time
+import traceback
 
 
 from .converters import PandocToPDFConverter
@@ -50,15 +51,16 @@ def main():
         thread_viewer = threading.Thread(target=target_viewer)
         thread_viewer.start()
 
-        # XXX  handle exceptions in this target, restart thread_watch_convert
-        # if needed
         def target_watch_convert():
             mtime = get_mtime(cv.src)
             while thread_viewer.is_alive():
                 this_mtime = get_mtime(cv.src)
                 if this_mtime > mtime:
                     mtime = this_mtime
-                    cv.convert()
+                    try:
+                        cv.convert()
+                    except Exception:
+                        traceback.print_exc()
                 time.sleep(0.5)
 
         # Without starting an editor, target_watch_convert() keeps this script
