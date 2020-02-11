@@ -23,9 +23,13 @@ $ docwatch -e foo.md
 ```
 [DEFAULT]
 
-# some text editor that opens a GUI window
-editor=xvim
+# When using terminal editors such as vim, we start that in the terminal where
+# the docwatch command was used. Cool, eh? If you skip this setting, the default
+# is $EDITOR.
+editor=vim
 
+# Use the system's default PDF viewer (called through xdg-open), or
+# something like evince (Gnome), okular (KDE), xpdf (when you like the 90s)
 pdf_viewer=xdg-open
 
 # pandoc filters, one per line, will be passed as
@@ -54,32 +58,43 @@ $ git clone ...
 $ pip install -e .
 ```
 
+## Dependecies
+
+* Python
+* `pandoc` and a TeX distro (e.g. `texlive` in Debian)
+
 # Tips & Tricks
 
 ## pandoc markdown + LaTeX + Bib(La)TeX
 
-In `pandoc`'s markdown, you can add a yaml metadata header
+In `pandoc`'s markdown, you can add a yaml metadata header.
 
 ```
 ---
 bibliography: lit.bib
 ---
 
-Normal *awesome* markdown content here. We cite a paper here using the BibTeX
-key like so [@knuth1997], which is the same as `\cite{knuth1997}` in LaTeX.
+We cite a reference [@knuth1997] using the BibTeX key, which is the
+same as `\cite{knuth1997}` in LaTeX.
 ```
 
 You can process this by adding the
 [pandoc-citeproc](https://github.com/jgm/pandoc-citeproc) filter to the config
 file's filter list. When the filter is not used, the cite syntax will be just
-rendered as is, there is no error produced.
+rendered as is without error.
 
-Note: When the bibliography file is specified as a relative path such as
+Note: When the bibliography file is specified by a relative path such as
 `lit.bib` or `../other/dir/lit.bib`, then `docwatch` must be started from the
 source file's directory such that `pandoc-citeproc` can resolve the path.
 Alternatively use an absolute path.
 
 # Related projects
+
+Github markdown:
+
+* https://github.com/joeyespo/grip
+
+vim plugins:
 
 * https://github.com/previm/previm
 * https://github.com/suan/vim-instant-markdown
@@ -88,8 +103,10 @@ Alternatively use an absolute path.
 
 What's the difference? Why this package?
 
-* not yet another vim plugin
-* independent of the editor and the viewer, both of which can be freely configured
+* `docwatch` is independent of
+    * the source file format (not only markdown, anything `pandoc` can digest)
+    * the editor (vim, sublime, emacs .. whatever floats your boat)
+    * the (pdf) viewer
+* not yet another vim plugin (vim: good, vim bloated with a gazillion plugins: bad)
 * we want PDF output instead of html (or any other output that `pandoc` can
   produce, that's a matter of adding more converters)
-* only dependency is `pandoc`

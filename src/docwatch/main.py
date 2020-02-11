@@ -11,6 +11,12 @@ import time
 from .converters import PandocToPDFConverter
 
 
+conf_default = {'editor': os.environ.get('EDITOR', 'vim'),
+                'pdf_viewer': 'xdg-open',
+                'filters': []}
+conf_fn = os.path.join(os.environ['HOME'], '.config/docwatch.conf')
+
+
 def get_mtime(fn):
     return os.stat(fn).st_mtime
 
@@ -21,10 +27,6 @@ def main():
     parser.add_argument('-e', '--with-editor', action='store_true')
     args = parser.parse_args()
 
-    conf_default = {'editor': 'gvim',
-                    'pdf_viewer': 'xpdf',
-                    'filters': []}
-    conf_fn = os.path.join(os.environ['HOME'], '.config/docwatch.conf')
     if os.path.exists(conf_fn):
         cfp = configparser.ConfigParser()
         cfp.read(conf_fn)
@@ -46,24 +48,41 @@ def main():
                                   tgt=fd.name,
                                   filters=filters)
         cv.convert()
-        threads = {}
-        threads['viewer'] = threading.Thread(
+        thread_viewer = threading.Thread(
             target=lambda: subprocess.run(f"{conf['pdf_viewer']} {cv.tgt} > /dev/null 2>&1",
                                           shell=True,
                                           check=True)
             )
+        thread_viewer.start()
+
+        def wait_target():
+            mtime = get_mtime(cv.src)
+            while thread_viewer.is_alive():
+                this_mtime = get_mtime(cv.src)
+                if this_mtime > mtime:
+                    mtime = this_mtime
+                    cv.convert()
+                time.sleep(0.5)
+
+        # Without starting an editor, wait_target() keeps this script running
+        # as foreground process, which will in turn keep all started threads
+        # alive (e.g. thread_viewer).
+        #
+        # In case of GUI editors that start their own window, we could also
+        # send the editor to a thread in the background, just as we do with
+        # thread_viewer.
+        #
+        # In case we want to open an editor that runs in the terminal (vim), we
+        # send wait_target() to the background and start the editor as the
+        # foreground process. This will block the Python interpreter process
+        # and thus also keep the threads alive. Basically,
+        #   python3 -c "import subprocess; subprocess.run('vim')"
+        # blocks the Python process as long as vim runs and fills the terminal
+        # in which we started this script. Yeah!
+        #
         if args.with_editor:
-            threads['editor'] = threading.Thread(
-                target=lambda: subprocess.run(f"{conf['editor']} {cv.src} > /dev/null 2>&1",
-                                              shell=True,
-                                              check=True)
-                )
-        for thr in threads.values():
-            thr.start()
-        mtime = get_mtime(cv.src)
-        while threads['viewer'].is_alive():
-            this_mtime = get_mtime(cv.src)
-            if this_mtime > mtime:
-                mtime = this_mtime
-                cv.convert()
-            time.sleep(0.5)
+            thread_wait = threading.Thread(target=wait_target)
+            thread_wait.start()
+            subprocess.run(f"{conf['editor']} {cv.src}", shell=True, check=True)
+        else:
+            wait_target()
