@@ -34,12 +34,15 @@ class PandocConverter:
         subprocess.run(shlex.split(cmd), check=True)
 
 
+# XXX link-citations and citecolor doesn't work
 class Markdown2PDFConverter(PandocConverter):
     options = '-V documentclass=scrartcl \
                -V pagesize=a4 \
                -V colorliks \
-               -V linkcolor=green \
+               -V linkcolor=red \
                -V urlcolor=blue \
+               -V citecolor=green \
+               -V link-citations=true \
                '
     filters = ['/home/elcorto/soft/git/pandocfilters/examples/gitlab_markdown.py']
     tgt_ext = 'pdf'
