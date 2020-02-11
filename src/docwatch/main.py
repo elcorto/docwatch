@@ -22,7 +22,10 @@ def main():
     parser.add_argument('--no-editor', action='store_true')
     args = parser.parse_args()
 
-    filters = [os.path.expanduser(p) for p in conf['pandoc']['filters'].strip().split()]
+    converter = PandocToPDFConverter
+    conf_section = conf[converter.conf_section]
+    filters = [os.path.expanduser(p) for p in
+               conf_section['filters'].strip().split()]
 
     src = os.path.expanduser(args.source_file)
     if not os.path.exists(src):
@@ -30,26 +33,24 @@ def main():
             fd.write(f"Hi, I'm your new file '{os.path.basename(fd.name)}'. "
                      f"Delete this line and start hacking.")
 
-    # suffix='.pdf' is hard-coded here and relies on cv being an instance of
-    # PandocToPDFConverter. We only need to add a suffix here in the PDF case
+    # We need to add a suffix == converter.tgt = '.pdf' here in the PDF case
     # b/c of the quirky pandoc behavior that in order to produce a PDF by
     # running latex, we need to use
     #     pandoc -o foo.pdf
     # instead of what one would expect
     #     pandoc -t pdf
-    with tempfile.NamedTemporaryFile(suffix='.pdf') as fd:
-        cv = PandocToPDFConverter(src=src,
-                                  tgt=fd.name,
-                                  filters=filters)
+    with tempfile.NamedTemporaryFile(suffix=converter.tgt_ext) as fd:
+        cv = converter(src=src,
+                       tgt=fd.name,
+                       filters=filters)
 
         def target_viewer():
+            # initial convert only
             cv.convert()
-            subprocess.run(f"{conf['DEFAULT']['pdf_viewer']} {cv.tgt} > /dev/null 2>&1",
+            subprocess.run(f"{conf_section['pdf_viewer']} {cv.tgt} "
+                           f"> /dev/null 2>&1",
                            shell=True,
                            check=True)
-
-        thread_viewer = threading.Thread(target=target_viewer)
-        thread_viewer.start()
 
         def target_watch_convert():
             mtime = get_mtime(cv.src)
@@ -79,9 +80,13 @@ def main():
         # blocks the Python process as long as vim runs and fills the terminal
         # in which we started this script. Yeah!
         #
+        thread_viewer = threading.Thread(target=target_viewer)
+        thread_viewer.start()
         if args.no_editor:
             target_watch_convert()
         else:
             thread_watch_convert = threading.Thread(target=target_watch_convert)
             thread_watch_convert.start()
-            subprocess.run(f"{conf['DEFAULT']['editor']} {cv.src}", shell=True, check=True)
+            subprocess.run(f"{conf_section['editor']} {cv.src}",
+                           shell=True,
+                           check=True)

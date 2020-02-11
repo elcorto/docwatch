@@ -9,6 +9,7 @@ class PandocConverter:
     # handling might come in handy.
     options = ''
     tgt_ext = None
+    conf_section = 'pandoc'
 
     def __init__(self, src, tgt, filters=[]):
         self.src = src
@@ -24,7 +25,6 @@ class PandocConverter:
         subprocess.run(cmd, check=True, shell=True)
 
 
-# XXX link-citations and citecolor doesn't work
 class PandocToPDFConverter(PandocConverter):
     options = f"-V documentclass=scrartcl \
                 -V pagesize=a4 \
@@ -33,6 +33,10 @@ class PandocToPDFConverter(PandocConverter):
                 -V urlcolor=blue \
                 -V citecolor=green \
                 -V link-citations=true \
-                --pdf-engine={conf['pandoc']['pdf_engine']} \
+                -V geometry:margin=1cm \
                 "
-    tgt_ext = "pdf"
+    tgt_ext = ".pdf"
+
+    def __init__(self, *args, **kwds):
+        self.options += f"--pdf-engine={conf[self.conf_section]['pdf_engine']} "
+        super().__init__(*args, **kwds)
