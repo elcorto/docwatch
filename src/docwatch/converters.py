@@ -31,5 +31,6 @@ class PandocToPDFConverter(PandocConverter):
                -V urlcolor=blue \
                -V citecolor=green \
                -V link-citations=true \
+               --pdf-engine=xelatex \
                '
     tgt_ext = 'pdf'
