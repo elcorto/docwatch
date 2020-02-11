@@ -19,3 +19,11 @@ pandoc) such as `gfm`, `markdown_strict`, `commonmark`, or in general all
 formats that pandoc cannot detect automatically, we may need to add an `-f` flag
 to pass to pandoc. Alternatively, add the option to pass any extra options to
 pandoc.
+
+error handling
+--------------
+* In PandocConverter, we pipe all stdout and stderr to logfile. That deals with
+  all errors from pandoc and filters. So far so good.
+* Deal w/ exceptions raised in threads (e.g. from cv.convert()). Right now that
+  prints to terminal and messes up vim. Or maybe move cv.convert() back to main
+  thread :)
