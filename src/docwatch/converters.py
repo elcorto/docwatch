@@ -1,4 +1,3 @@
-import shlex
 import subprocess
 
 
@@ -18,8 +17,9 @@ class PandocConverter:
 
     def convert(self):
         filters = " ".join(f"-F {ff}" for ff in self.filters)
-        cmd = f"pandoc {filters} {self.options} -o {self.tgt} {self.src}"
-        subprocess.run(shlex.split(cmd), check=True)
+        cmd = (f"pandoc {filters} {self.options} -o {self.tgt} {self.src} "
+               f" > /tmp/docwatch.log 2>&1")
+        subprocess.run(cmd, check=True, shell=True)
 
 
 # XXX link-citations and citecolor doesn't work
