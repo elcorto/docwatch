@@ -128,9 +128,10 @@ is treated like
 
     $$display style math$$ {#eq:some-math}
 
-Using references: {@eq:foo} and {+@eq:bar}. Of course the `{+@eq:bar}` syntax
-with `+` works only with pandoc-xnos. In pandoc-crossref, you need to use an
-uppercase first letter `@Eq:bar` .. well allright.
+Using references: {@eq:foo} or @eq:foo and {+@eq:bar} or +@eq:bar. Of course
+the `{+@eq:bar}` syntax with `+` works only with pandoc-xnos. In
+pandoc-crossref, you need to use an uppercase first letter `@Eq:bar` .. well
+allright.
 
 # BibTeX
 

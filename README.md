@@ -1,10 +1,12 @@
-# About
+About
+=====
 
-Convert source file (e.g. a markdown file) to PDF using `pandoc`, open in viewer
-program, watch source for changes and re-build automatically. Optional config
-file `$HOME/.config/docwatch.conf`.
+Convert a source file (e.g. markdown) to PDF using `pandoc`, open in a viewer
+application, watch source for changes and re-build automatically. Optional
+config file `$HOME/.config/docwatch.conf`.
 
-# Usage
+Usage
+=====
 
 This will open the built PDF in a viewer.
 
@@ -12,13 +14,17 @@ This will open the built PDF in a viewer.
 $ docwatch foo.md
 ```
 
-Open `foo.md` in your text editor (see config file below) as well.
+Aditionally, open `foo.md` in your text editor.
 
 ```sh
 $ docwatch -e foo.md
 ```
 
-# Example config file
+If the source file `foo.md` doesn't exist, it will be created. Logs are written
+to `/tmp/docwatch.log`.
+
+Example config file
+===================
 
 ```
 [DEFAULT]
@@ -29,7 +35,7 @@ $ docwatch -e foo.md
 editor=vim
 
 # Use the system's default PDF viewer (called through xdg-open), or
-# something like evince (Gnome), okular (KDE), xpdf (when you like the 90s)
+# something like evince (Gnome), okular (KDE), xpdf (you are a 90s person)
 pdf_viewer=xdg-open
 
 # pandoc filters, one per line, will be passed as
@@ -39,9 +45,11 @@ pdf_viewer=xdg-open
 filters=
     /path/to/pandocfilters/examples/gitlab_markdown.py
     pandoc-citeproc
+    pandoc-xnos
 ```
 
-# File formats
+File formats
+============
 
 Currently we only do conversion to PDF. The source file can be anything `pandoc`
 can handle. We don't do source file format detection at all, the file is passed
@@ -51,23 +59,30 @@ directly to `pandoc`, as in
 $ pandoc [options] -o foo.pdf foo.md
 ```
 
-# Install
+Install
+=======
 
 ```sh
 $ git clone ...
-$ pip install -e .
+$ pip install [-e] .
 ```
 
-## Dependecies
+Dependencies
+------------
 
 * Python
-* `pandoc` and a TeX distro (e.g. `texlive` in Debian)
+* `pandoc`
+* a TeX distro (e.g. `texlive` in Debian)
 
-# Tips & Tricks
 
-## pandoc markdown + LaTeX + Bib(La)TeX
+Tips & Tricks
+=============
 
-In `pandoc`'s markdown, you can add a yaml metadata header.
+Bib(La)TeX
+----------
+
+In `pandoc`'s markdown, you can add a yaml metadata header, where you can
+specify a BibTeX database file (or use `--bibliography`).
 
 ```
 ---
@@ -78,17 +93,60 @@ We cite a reference [@knuth1997] using the BibTeX key, which is the
 same as `\cite{knuth1997}` in LaTeX.
 ```
 
-You can process this by adding the
-[pandoc-citeproc](https://github.com/jgm/pandoc-citeproc) filter to the config
-file's filter list. When the filter is not used, the cite syntax will be just
+You can process this by adding the [pandoc-citeproc] filter to the config
+file's filter list.
+
+
+Cross-references
+----------------
+
+There are at least two filters ([pandoc-citeproc], [pandoc-xons]) for doing
+cross-referencing.
+
+```
+Here be math
+$$\alpha = \int\sin(x)\,\Gamma(\phi)\,d\phi$$ {#eq:alpha}
+
+which we can reference in @eq:alpha.
+```
+
+Both filters have slightly different syntax, but the example here should work
+in both.
+
+See also `examples/md.md` for more.
+
+Notes
+=====
+
+New / empty source files
+------------------------
+
+When `pandoc` is given an empty file, it just produces an empty file, no matter
+what the target format is. Some tools such as LaTeX don't react too well to
+empty files. For this reason we add a dummy line to the source file should it
+not exist.
+
+pandoc-citeproc & bibliography
+------------------------------
+
+When the filter `pandoc-citeproc` is not used, the cite syntax will be just
 rendered as is without error.
 
-Note: When the bibliography file is specified by a relative path such as
-`lit.bib` or `../other/dir/lit.bib`, then `docwatch` must be started from the
-source file's directory such that `pandoc-citeproc` can resolve the path.
-Alternatively use an absolute path.
+When the bibliography file is specified by a relative path such as `lit.bib` or
+`../other/dir/lit.bib`, then `docwatch` must be started from the source file's
+directory such that `pandoc-citeproc` can resolve the path (at least when using
+LaTeX under the hood). Alternatively use an absolute path. The same goes for
+image paths, by the way.
 
-# Related projects
+Using many filters to replicate LaTeX functionality
+---------------------------------------------------
+
+While this works and is kind of fun, don't get too crazy in terms of using
+filters. If you find yourself wanting to replace much of, say TeX Live, with a
+pile of `pandoc` filters, then you should stop and write your document in TeX.
+
+Related projects
+================
 
 Github markdown:
 
@@ -105,8 +163,15 @@ What's the difference? Why this package?
 
 * `docwatch` is independent of
     * the source file format (not only markdown, anything `pandoc` can digest)
-    * the editor (vim, sublime, emacs .. whatever floats your boat)
+    * the editor
     * the (pdf) viewer
-* not yet another vim plugin (vim: good, vim bloated with a gazillion plugins: bad)
-* we want PDF output instead of html (or any other output that `pandoc` can
-  produce, that's a matter of adding more converters)
+* stand-alone tool, not yet another vim plugin
+* PDF output
+* any other output that `pandoc` can produce can be added by adding more
+  converters
+* one can also define converters that don't use pandoc at all (see
+  `converters.py`)
+
+[pandoc-citeproc]: https://github.com/jgm/pandoc-citeproc
+[pandoc-crossref]: https://github.com/lierdakil/pandoc-crossref
+[pandoc-xons]: https://github.com/tomduck/pandoc-xnos
