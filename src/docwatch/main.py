@@ -41,16 +41,18 @@ def main():
                                   tgt=fd.name,
                                   filters=filters)
 
-        def viewer_target():
+        def target_viewer():
             cv.convert()
             subprocess.run(f"{conf['DEFAULT']['pdf_viewer']} {cv.tgt} > /dev/null 2>&1",
                            shell=True,
                            check=True)
 
-        thread_viewer = threading.Thread(target=viewer_target)
+        thread_viewer = threading.Thread(target=target_viewer)
         thread_viewer.start()
 
-        def wait_target():
+        # XXX  handle exceptions in this target, restart thread_watch_convert
+        # if needed
+        def target_watch_convert():
             mtime = get_mtime(cv.src)
             while thread_viewer.is_alive():
                 this_mtime = get_mtime(cv.src)
@@ -59,16 +61,16 @@ def main():
                     cv.convert()
                 time.sleep(0.5)
 
-        # Without starting an editor, wait_target() keeps this script running
-        # as foreground process, which will in turn keep all started threads
-        # alive (e.g. thread_viewer).
+        # Without starting an editor, target_watch_convert() keeps this script
+        # running as foreground process, which will in turn keep all started
+        # threads alive (e.g. thread_viewer).
         #
         # In case of GUI editors that start their own window, we could also
         # send the editor to a thread in the background, just as we do with
         # thread_viewer.
         #
         # In case we want to open an editor that runs in the terminal (vim), we
-        # send wait_target() to the background and start the editor as the
+        # send target_watch_convert() to the background and start the editor as the
         # foreground process. This will block the Python interpreter process
         # and thus also keep the threads alive. Basically,
         #   python3 -c "import subprocess; subprocess.run('vim')"
@@ -76,8 +78,8 @@ def main():
         # in which we started this script. Yeah!
         #
         if args.no_editor:
-            wait_target()
+            target_watch_convert()
         else:
-            thread_wait = threading.Thread(target=wait_target)
-            thread_wait.start()
+            thread_watch_convert = threading.Thread(target=target_watch_convert)
+            thread_watch_convert.start()
             subprocess.run(f"{conf['DEFAULT']['editor']} {cv.src}", shell=True, check=True)
