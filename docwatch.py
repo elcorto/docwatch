@@ -31,7 +31,7 @@ class PandocConverter:
     def convert(self):
         filters = " ".join(f"-F {ff}" for ff in self.filters)
         cmd = f"pandoc {filters} {self.options} -o {self.tgt} {self.src}"
-        subprocess.run(shlex.split(cmd))
+        subprocess.run(shlex.split(cmd), check=True)
 
 
 class Markdown2PDFConverter(PandocConverter):
@@ -56,11 +56,15 @@ if __name__ == '__main__':
         cv.convert()
         threads = {}
         threads['viewer'] = threading.Thread(
-            target=lambda: subprocess.run(f"xdg-open {cv.tgt} > /dev/null 2>&1", shell=True)
+            target=lambda: subprocess.run(f"xdg-open {cv.tgt} > /dev/null 2>&1",
+                                          shell=True,
+                                          check=True)
             )
         if args.with_editor:
             threads['editor'] = threading.Thread(
-                target=lambda: subprocess.run(f"xvim {cv.src} > /dev/null 2>&1", shell=True)
+                target=lambda: subprocess.run(f"xvim {cv.src} > /dev/null 2>&1",
+                                              shell=True,
+                                              check=True)
                 )
         for thr in threads.values():
             thr.start()
