@@ -29,7 +29,7 @@ Example config file
 # is $EDITOR.
 editor=vim
 ##editor=gvim
-##editor=sublime
+##editor=emacs
 
 pdf_viewer=xdg-open
 ##pdf_viewer=okular
@@ -40,7 +40,6 @@ pdf_viewer=xdg-open
 
 # slow, but can deal with weird font situations
 ##pdf_engine=xelatex
-
 # pandoc default
 pdf_engine=pdflatex
 
@@ -48,10 +47,13 @@ pdf_engine=pdflatex
 #   pandoc -F filter1 -F filter2 ...
 # Each one is expected to be an executable. If no path is given, the executable
 # is assumed to be on $PATH.
+#
+# pandoc-citeproc must be listed after pandoc-xnos
+# https://github.com/tomduck/pandoc-eqnos#usage
 filters=
     /path/to/pandocfilters/examples/gitlab_markdown.py
-    pandoc-citeproc
 ##    pandoc-xnos
+    pandoc-citeproc
 
 # pandoc -V option1 -V option2
 latex_options=
@@ -111,7 +113,7 @@ file's filter list.
 Cross-references
 ----------------
 
-There are at least two filters ([pandoc-citeproc], [pandoc-xons]) for doing
+There are at least two filters ([pandoc-crossref], [pandoc-xons]) for doing
 cross-referencing.
 
 ```

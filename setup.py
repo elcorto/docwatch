@@ -16,13 +16,13 @@ with open(os.path.join(here, 'README.md')) as fd:
 setup(
     name='docwatch',
     version='0.0.0',
-    description='watch and convert a source document with pandoc',
+    description='Convert, preview, watch and rebuild a source document with pandoc',
     long_description=long_description,
     url='https://github.com/elcorto/docwatch',
     author='Steve Schmerler',
     author_email='git@elcorto.com',
     license='BSD 3-Clause',
-    keywords='pandoc preview',
+    keywords='pandoc preview markdown latex pdf',
     package_dir={'': 'src'},
     packages=find_packages(where='src'),
     entry_points={
