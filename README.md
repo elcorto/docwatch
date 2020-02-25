@@ -21,6 +21,9 @@ to `/tmp/docwatch.log`.
 Example config file
 ===================
 
+The config file is in [Python configparser / DOS ini
+format](https://docs.python.org/3.8/library/configparser.html).
+
 ```dosini
 [DEFAULT]
 
@@ -29,19 +32,18 @@ Example config file
 # is $EDITOR.
 editor=vim
 ##editor=gvim
-##editor=emacs
 
 pdf_viewer=xdg-open
 ##pdf_viewer=okular
-##pdf_viewer=evince
-##pdf_viewer=xpdf
 
 [pandoc]
 
-# slow, but can deal with weird font situations
+# Overwrite [DEFAULT].editor
+##editor=emacs
+
+# xelatex can be slower than the default pdflatex, but can deal with weird
+# font situations
 ##pdf_engine=xelatex
-# pandoc default
-pdf_engine=pdflatex
 
 # pandoc filters, one per line, will be passed as
 #   pandoc -F filter1 -F filter2 ...

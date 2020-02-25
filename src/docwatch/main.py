@@ -30,7 +30,7 @@ def main():
             fd.write(f"Hi, I'm your new file '{os.path.basename(fd.name)}'. "
                      f"Delete this line and start hacking.")
 
-    # We need to add a suffix == converter.tgt = '.pdf' here in the PDF case
+    # We need to add a suffix converter.tgt_ext = '.pdf' here in the PDF case
     # b/c of the quirky pandoc behavior that in order to produce a PDF by
     # running latex, we need to use
     #     pandoc -o foo.pdf
