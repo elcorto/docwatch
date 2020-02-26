@@ -21,7 +21,7 @@ to `/tmp/docwatch.log`.
 Example config file
 ===================
 
-```conf
+```dosini
 [DEFAULT]
 
 # When using terminal editors such as vim, we start that in the terminal where
