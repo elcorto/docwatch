@@ -8,6 +8,7 @@ import time
 
 from .converters import PandocToPDFConverter
 from .conf import conf
+from .subproc import run_cmd
 
 
 def get_mtime(fn):
@@ -22,6 +23,9 @@ def main():
 
     converter = PandocToPDFConverter
     conf_dct = conf[converter.conf_section]
+
+    if os.path.exists(conf_dct['logfile']):
+        os.unlink(conf_dct['logfile'])
 
     src = os.path.expanduser(args.source_file)
     if not os.path.exists(src):
@@ -41,10 +45,7 @@ def main():
         def target_viewer():
             # initial convert only
             cv.convert()
-            subprocess.run(f"{conf_dct['pdf_viewer']} {cv.tgt} "
-                           f"> /dev/null 2>&1",
-                           shell=True,
-                           check=True)
+            run_cmd(f"{conf_dct['pdf_viewer']} {cv.tgt}")
 
         def target_watch_convert():
             mtime = get_mtime(cv.src)

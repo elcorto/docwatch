@@ -1,10 +1,7 @@
-import datetime
 import os
-import re
-import subprocess
-import traceback
 
 from .conf import conf
+from .subproc import run_cmd
 
 
 class PandocConverter:
@@ -27,14 +24,7 @@ class PandocConverter:
                     self.conf_dct['filters'].strip().split()]
         filters = " ".join(f"-F {ff}" for ff in _filters)
         cmd = f"pandoc {filters} {self.options} -o {self.tgt} {self.src}"
-        try:
-            subprocess.run(cmd, check=True, shell=True,
-                           stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
-        except subprocess.CalledProcessError as ex:
-            out = ex.stdout.decode() + '\n' + traceback.format_exc()
-            stamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
-            with open(self.conf_dct['logfile'], 'w') as fd:
-                fd.write(re.sub('^', stamp + ': ', out, flags=re.M))
+        run_cmd(cmd)
 
 
 class PandocToPDFConverter(PandocConverter):
