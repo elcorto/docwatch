@@ -4,7 +4,6 @@ import subprocess
 import tempfile
 import threading
 import time
-import traceback
 
 
 from .converters import PandocToPDFConverter
@@ -22,7 +21,7 @@ def main():
     args = parser.parse_args()
 
     converter = PandocToPDFConverter
-    conf_section = conf[converter.conf_section]
+    conf_dct = conf[converter.conf_section]
 
     src = os.path.expanduser(args.source_file)
     if not os.path.exists(src):
@@ -42,7 +41,7 @@ def main():
         def target_viewer():
             # initial convert only
             cv.convert()
-            subprocess.run(f"{conf_section['pdf_viewer']} {cv.tgt} "
+            subprocess.run(f"{conf_dct['pdf_viewer']} {cv.tgt} "
                            f"> /dev/null 2>&1",
                            shell=True,
                            check=True)
@@ -53,10 +52,7 @@ def main():
                 this_mtime = get_mtime(cv.src)
                 if this_mtime > mtime:
                     mtime = this_mtime
-                    try:
-                        cv.convert()
-                    except Exception:
-                        traceback.print_exc()
+                    cv.convert()
                 time.sleep(0.5)
 
         # Without starting an editor, target_watch_convert() keeps this script
@@ -82,6 +78,6 @@ def main():
         else:
             thread_watch_convert = threading.Thread(target=target_watch_convert)
             thread_watch_convert.start()
-            subprocess.run(f"{conf_section['editor']} {cv.src}",
+            subprocess.run(f"{conf_dct['editor']} {cv.src}",
                            shell=True,
                            check=True)

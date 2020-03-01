@@ -16,7 +16,17 @@ $ docwatch foo.md
 ```
 
 If the source file `foo.md` doesn't exist, it will be created. Logs are written
-to `/tmp/docwatch.log`.
+to `/tmp/docwatch.log` (`logfile` config option). The document is rebuilt
+whenever it is saved.
+
+Error handling
+--------------
+All `pandoc` and LaTeX errors are logged to `logfile`. Therefore, when you
+change something in `foo.md`, save the file, but the PDF is not being rebuilt,
+then you probably made a (LaTeX) mistake, which made the `pandoc` command fail.
+Then look into `logfile`. Check the time stamp in `logfile` to make sure the
+error is related to the last change to the source file.
+
 
 Example config file
 ===================
@@ -35,6 +45,8 @@ editor=vim
 
 pdf_viewer=xdg-open
 ##pdf_viewer=okular
+
+logfile=/tmp/docwatch.log
 
 [pandoc]
 

@@ -10,7 +10,8 @@ conf_default = configparser.ConfigParser()
 # conf_default.sections() only returns ['pandoc'] .
 conf_default['DEFAULT'] = dict(
     editor=os.environ.get('EDITOR', 'vim'),
-    pdf_viewer='xdg-open'
+    pdf_viewer='xdg-open',
+    logfile='/tmp/docwatch.log',
     )
 
 conf_default['pandoc'] = dict(

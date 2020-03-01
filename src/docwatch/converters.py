@@ -1,5 +1,8 @@
+import datetime
 import os
+import re
 import subprocess
+import traceback
 
 from .conf import conf
 
@@ -17,14 +20,21 @@ class PandocConverter:
         self.tgt = tgt
         if self.tgt_ext is not None:
             assert tgt.endswith(self.tgt_ext)
+        self.conf_dct = conf[self.conf_section]
 
     def convert(self):
         _filters = [os.path.expanduser(p) for p in
-                    conf[self.conf_section]['filters'].strip().split()]
+                    self.conf_dct['filters'].strip().split()]
         filters = " ".join(f"-F {ff}" for ff in _filters)
-        cmd = (f"pandoc {filters} {self.options} -o {self.tgt} {self.src} "
-               f" > /tmp/docwatch.log 2>&1")
-        subprocess.run(cmd, check=True, shell=True)
+        cmd = f"pandoc {filters} {self.options} -o {self.tgt} {self.src}"
+        try:
+            subprocess.run(cmd, check=True, shell=True,
+                           stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+        except subprocess.CalledProcessError as ex:
+            out = ex.stdout.decode() + '\n' + traceback.format_exc()
+            stamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+            with open(self.conf_dct['logfile'], 'w') as fd:
+                fd.write(re.sub('^', stamp + ': ', out, flags=re.M))
 
 
 class PandocToPDFConverter(PandocConverter):
@@ -39,8 +49,8 @@ class PandocToPDFConverter(PandocConverter):
     tgt_ext = ".pdf"
 
     def __init__(self, *args, **kwds):
-        self.options += f"--pdf-engine={conf[self.conf_section]['pdf_engine']} "
-        _latex_options = conf[self.conf_section]['latex_options'].strip().split()
+        super().__init__(*args, **kwds)
+        self.options += f"--pdf-engine={self.conf_dct['pdf_engine']} "
+        _latex_options = self.conf_dct['latex_options'].strip().split()
         latex_options = " ".join(f"-V {opt}" for opt in _latex_options)
         self.options += latex_options
-        super().__init__(*args, **kwds)
