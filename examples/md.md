@@ -7,7 +7,9 @@ reference-section-title: Refs
 
 ![image w/ caption](pic.jpg){width=50%}
 
-# Indented code blocks
+# Code
+
+## Indented blocks
 
 text start 1
 
@@ -38,14 +40,18 @@ text start 4
 
 text end 4
 
-# Fenced code blocks
 
-```
-fenced
-    code
-```
+## Inline
 
 `inline code`
+
+## Fenced code blocks
+
+```
+# fenced code
+for i in range(foo):
+    print(i)
+```
 
 ```py
 # fenced code with highlighting
@@ -58,7 +64,6 @@ for fn in foo bar; do
     tail $fn
 done
 ```
-
 
 # Bullet lists
 
@@ -100,39 +105,39 @@ Table: caption 2
 
 # Math
 
-We can do inline math inline math $\pi\,\sin(x)$ easily.
+We can do inline math $E = m\,c^2$ easily.
 
 Display math with `$$...$$`:
 
-$$E = m\,c^2$$ {#eq:foo}
+$$E = m\,c^2$$
 
-$$
-    \Phi = \int_\infty^\Omega \sin x\,\text{d}x
-$$ {#eq:bar}
-
-GitLab style math here. Cannot use pandoc-xnos/pandoc-crossref `{#eq:foo}` labels here,
-though. Works only for `$$...$$`.
+GitLab style fenced math
 
 ```math
-E = m\,c^2;\:
-\Phi = \int_\infty^\Omega \sin x
+E = m\,c^2
 ```
 
-## Equation labels and refs
+# Labels and references
 
-pandoc-xnos: using
+$$E = m\,c^2$$ {#eq:foo}
 
-    $inline math but with labels$ {#eq:some-math}
+`pandoc-xnos` (and `pandoc-crossref`) `{#eq:foo}`
+labels only work for `$$...$$`, not GitLab style.
 
-is treated like
+We can reference equations (and tables, figures) using `{@eq:foo}` {@eq:foo} or
+`@eq:foo` @eq:foo or `{+@eq:foo}` {+@eq:foo} or `+@eq:foo` +@eq:foo.
 
-    $$display style math$$ {#eq:some-math}
+Using inline math but with labels
 
-Using references: {@eq:foo} or @eq:foo and {+@eq:bar} or +@eq:bar. Of course
-the `{+@eq:bar}` syntax with `+` works only with pandoc-xnos. In
-pandoc-crossref, you need to use an uppercase first letter `@Eq:bar` .. well
-allright.
+$E = m\,c^2$ {#eq:some-math}
+
+is treated like display style math
+
+$$E = m\,c^2$$ {#eq:some-math}
+
+The `+@eq:foo` syntax with `+` works only with `pandoc-xnos`. In
+`pandoc-crossref`, you need to use an uppercase first letter `@Eq:foo`.
 
 # BibTeX
 
-Using pandoc-citeproc, we cite [@focker_2019].
+Using `pandoc-citeproc`, we cite [@focker_2019].
