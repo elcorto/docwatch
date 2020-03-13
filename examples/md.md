@@ -121,11 +121,11 @@ E = m\,c^2
 
 $$E = m\,c^2$$ {#eq:foo}
 
-`pandoc-xnos` (and `pandoc-crossref`) `{#eq:foo}`
-labels only work for `$$...$$`, not GitLab style.
+`pandoc-xnos` labels like `{#eq:foo}` only work for `$$...$$` style math, not GitLab
+style.
 
-We can reference equations (and tables, figures) using `{@eq:foo}` {@eq:foo} or
-`@eq:foo` @eq:foo or `{+@eq:foo}` {+@eq:foo} or `+@eq:foo` +@eq:foo.
+We can reference equations using `{@eq:foo}` {@eq:foo} or `@eq:foo` @eq:foo or
+`{+@eq:foo}` {+@eq:foo} or `+@eq:foo` +@eq:foo.
 
 Using inline math but with labels
 
@@ -137,6 +137,16 @@ $$E = m\,c^2$$ {#eq:some-math}
 
 The `+@eq:foo` syntax with `+` works only with `pandoc-xnos`. In
 `pandoc-crossref`, you need to use an uppercase first letter `@Eq:foo`.
+
+a|b
+-|-
+c|d
+
+Table: table with label {#tbl:table1}
+
+![small image with label](pic.jpg){width=20% #fig:figure1}
+
+We can also cite tables (see +@tbl:table1) and figures (+@fig:figure1).
 
 # BibTeX
 

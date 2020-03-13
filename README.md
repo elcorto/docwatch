@@ -1,7 +1,7 @@
 About
 =====
 
-Convert a source file (e.g. markdown) to PDF using `pandoc`, open in a viewer
+Convert a source file (e.g. markdown) to PDF using [pandoc], open in a viewer
 application, watch source for changes and re-build automatically. Optional
 config file `$HOME/.config/docwatch.conf`.
 
@@ -140,7 +140,13 @@ which we can reference in @eq:alpha.
 Both filters have slightly different syntax, but the example here should work
 in both.
 
-See also `examples/md.md` for more.
+Install the complete `pandoc-xons` family of filters with `pip install
+pandoc-eqnos pandoc-fignos pandoc-secnos pandoc-tablenos pandoc-xnos`. You can
+leave out any package (e.g. `pandoc-secnos` if you don't want section labels)
+and still use `pandoc-xnos` as a filter, which will use all installed
+functionality.
+
+See also [examples/md.md] for more.
 
 Notes
 =====
@@ -177,29 +183,34 @@ Related projects
 
 Github markdown:
 
-* https://github.com/joeyespo/grip
+* <https://github.com/joeyespo/grip>
 
 vim plugins:
 
-* https://github.com/previm/previm
-* https://github.com/suan/vim-instant-markdown
-* https://github.com/iamcco/markdown-preview.nvim
+* <https://github.com/previm/previm>
+* <https://github.com/suan/vim-instant-markdown>
+* <https://github.com/iamcco/markdown-preview.nvim>
 * ... etc
 
-What's the difference? Why this package?
+Why this package?
+-----------------
 
 * `docwatch` is independent of
     * the source file format (not only markdown, anything `pandoc` can digest)
-    * the editor
-    * the (pdf) viewer
-* stand-alone tool, not yet another vim plugin
+    * the editor (stand-alone tool, not yet another vim plugin)
+    * the viewer
 * PDF output
+* support for pandoc filters enables basic TeX features w/o writing TeX
 * any other output that `pandoc` can produce can be added by adding more
-  converters
-* one can also define converters that don't use pandoc at all (see
-  `converters.py`)
+  converters (see [converters.py])
+* one can also define converters that don't use pandoc at all, e.g. use
+  [latexmk] to build TeX projects
 
 
 [pandoc-citeproc]: https://github.com/jgm/pandoc-citeproc
 [pandoc-crossref]: https://github.com/lierdakil/pandoc-crossref
 [pandoc-xons]: https://github.com/tomduck/pandoc-xnos
+[latexmk]: https://mg.readthedocs.io/latexmk.html
+[converters.py]: https://github.com/elcorto/docwatch/blob/master/src/docwatch/converters.py
+[pandoc]: https://pandoc.org
+[examples/md.md]: https://github.com/elcorto/docwatch/blob/master/examples/md.md
