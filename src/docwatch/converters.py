@@ -23,7 +23,7 @@ class PandocConverter:
         _filters = [os.path.expanduser(p) for p in
                     self.conf_dct['filters'].strip().split()]
         filters = " ".join(f"-F {ff}" for ff in _filters)
-        cmd = f"pandoc {filters} {self.options} -o {self.tgt} {self.src}"
+        cmd = f"pandoc {filters} {self.options} {self.src}"
         run_cmd(cmd)
 
 
@@ -44,3 +44,10 @@ class PandocToPDFConverter(PandocConverter):
         _latex_options = self.conf_dct['latex_options'].strip().split()
         latex_options = " ".join(f"-V {opt}" for opt in _latex_options)
         self.options += latex_options
+        # We need to use a suffix self.tgt_ext = '.pdf' here in the PDF case
+        # b/c of the quirky pandoc behavior that in order to produce a PDF by
+        # running latex, we *have* to use
+        #     pandoc -o foo.pdf
+        # instead of the usual
+        #     pandoc [-t <tgt format>] {self.src}
+        self.options += f" -o {self.tgt}"
