@@ -178,6 +178,41 @@ While this works and is kind of fun, don't get too crazy in terms of using
 filters. If you find yourself wanting to replace much of, say TeX Live, with a
 pile of `pandoc` filters, then you should stop and write your document in TeX.
 
+Converting LaTeX source files
+-----------------------------
+
+Is it possible to build LaTeX? Sure, since we support everything `pandoc` can,
+for a single, self-contained TeX files just do
+
+```sh
+$ docwatch foo.tex
+```
+
+which will use `pandoc [-f latex] -o foo.pdf foo.tex`. However, TeX projects
+usually have a `main.tex` and many source files included in main, so the
+`docwatch` model (open and render one single file) doesn't apply here. In this
+case, it makes sense use something like [latexmk] with make-like behavior to
+watch all `*.tex` files. Furthermore, [latexmk] has its own preview mode
+(`latexmk -pvc`)!
+
+You may need to define the pdf viewer:
+
+```
+# ~/.config/latexmk/latexmkrc
+$pdf_previewer = 'okular %S'
+```
+
+Then the workflow is almost as with `docwatch`:
+
+```sh
+# watch main.tex and all dependencies, start pdf_previewer application
+$ latexmk -pdf -pvc main.tex
+
+# edit one of the project files
+$ vim src/chapter_foo.tex
+```
+
+
 Related projects
 ================
 
@@ -203,8 +238,7 @@ Why this package?
 * support for pandoc filters enables basic TeX features w/o writing TeX
 * any other output that `pandoc` can produce can be added by adding more
   converters (see [converters.py])
-* one can also define converters that don't use pandoc at all, e.g. use
-  [latexmk] to build TeX projects
+* one can also define converters that don't use pandoc at all
 
 
 [pandoc-citeproc]: https://github.com/jgm/pandoc-citeproc
