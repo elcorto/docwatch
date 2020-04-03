@@ -1,26 +1,65 @@
 About
 =====
 
-Convert a source file (e.g. markdown) to PDF using [pandoc], open in a viewer
-application, watch source for changes and re-build automatically. Optional
-config file `$HOME/.config/docwatch.conf`.
+* convert a source file to PDF using [pandoc] (which uses LaTeX)
+* open in a viewer application
+* watch source for changes and re-build automatically
+
+Optional config file `$HOME/.config/docwatch.conf`.
+
 
 Usage
 =====
 
-This will open `foo.md` in your text editor, as well as the built PDF in a
-viewer application.
+This will open `foo.md` in your text editor (config file: `editor`).
 
 ```sh
 $ docwatch foo.md
 ```
 
+You can use many formats that `pandoc` understands.
+
+```sh
+$ docwatch foo.rst
+$ docwatch foo.tex
+...
+```
+
+It will also open a pdf viewer (config file: `pdf_viewer`) and display the
+built PDF.
+
+The document is rebuilt whenever it is saved.
+
 If the source file `foo.md` doesn't exist, it will be created. Logs are written
-to `/tmp/docwatch.log` (`logfile` config option). The document is rebuilt
-whenever it is saved.
+to `/tmp/docwatch.log` (config file: `logfile`).
+
+
+Example config file
+===================
+
+The config file is in [Python configparser / DOS ini][pyini] format. See
+[examples/docwatch.conf] for all possible settings.
+
+```dosini
+[DEFAULT]
+
+editor=vim
+pdf_viewer=xdg-open
+
+[pandoc]
+
+filters=
+    pandoc-xnos
+    pandoc-citeproc
+
+latex_options=
+    geometry:margin=1.5cm
+    pagestyle=empty
+```
 
 Error handling
---------------
+==============
+
 All `pandoc` and LaTeX errors are logged to `logfile`. Therefore, when you
 change something in `foo.md`, save the file, but the PDF is not being rebuilt,
 then you probably made a (LaTeX) mistake, which made the `pandoc` command fail.
@@ -28,63 +67,22 @@ Then look into `logfile`. Check the time stamp in `logfile` to make sure the
 error is related to the last change to the source file.
 
 
-Example config file
-===================
-
-The config file is in [Python configparser / DOS ini
-format](https://docs.python.org/3.8/library/configparser.html).
-
-```dosini
-[DEFAULT]
-
-# When using terminal editors such as vim, we start that in the terminal where
-# the docwatch command was used. Cool, eh? If you skip this setting, the default
-# is $EDITOR.
-editor=vim
-##editor=gvim
-
-pdf_viewer=xdg-open
-##pdf_viewer=okular
-
-logfile=/tmp/docwatch.log
-
-[pandoc]
-
-# Overwrite [DEFAULT].editor
-##editor=emacs
-
-# xelatex can be slower than the default pdflatex, but can deal with weird
-# font situations
-##pdf_engine=xelatex
-
-# pandoc filters, one per line, will be passed as
-#   pandoc -F filter1 -F filter2 ...
-# Each one is expected to be an executable. If no path is given, the executable
-# is assumed to be on $PATH.
-#
-# pandoc-citeproc must be listed after pandoc-xnos
-# https://github.com/tomduck/pandoc-eqnos#usage
-filters=
-    /path/to/pandocfilters/examples/gitlab_markdown.py
-##    pandoc-xnos
-    pandoc-citeproc
-
-# pandoc -V option1 -V option2
-latex_options=
-    geometry:margin=1.5cm
-    pagestyle=empty
-```
-
 File formats
 ============
 
-Currently we only do conversion to PDF. The source file can be anything `pandoc`
-can handle. We don't do source file format detection at all, the file is passed
+Source: We don't do source file format detection at all, the file is passed
 directly to `pandoc`, as in
 
 ```sh
-$ pandoc [options] -o foo.pdf foo.md
+$ pandoc -o foo.pdf foo.md
 ```
+
+Therefore, the source file can be anything `pandoc` can handle w/o specifying
+`pandoc -f format`.
+
+Target: We only do conversion to PDF.
+
+See "Extending" below for more.
 
 Install
 =======
@@ -188,7 +186,7 @@ for a single, self-contained TeX files just do
 $ docwatch foo.tex
 ```
 
-which will use `pandoc [-f latex] -o foo.pdf foo.tex`. However, TeX projects
+which will use `pandoc -o foo.pdf foo.tex`. However, TeX projects
 usually have a `main.tex` and many source files included in main, so the
 `docwatch` model (open and render one single file) doesn't apply here. In this
 case, it makes sense use something like [latexmk] with make-like behavior to
@@ -231,14 +229,21 @@ Why this package?
 -----------------
 
 * `docwatch` is independent of
-    * the source file format (not only markdown, anything `pandoc` can digest)
+    * the source file format (not only markdown, anything `pandoc` can digest
+      (w/o `-f format`))
     * the editor (stand-alone tool, not yet another vim plugin)
     * the viewer
 * PDF output
 * support for pandoc filters enables basic TeX features w/o writing TeX
-* any other output that `pandoc` can produce can be added by adding more
-  converters (see [converters.py])
+
+Extending
+=========
+
+* any output other than PDF that `pandoc` can produce can be added by adding
+  more converters (see [converters.py])
 * one can also define converters that don't use pandoc at all
+* one can easily add a feature to pass `-f format` to `pandoc` but ATM we don't
+  need that (using mainly md, tex (single file), rst)
 
 
 [pandoc-citeproc]: https://github.com/jgm/pandoc-citeproc
@@ -248,3 +253,5 @@ Why this package?
 [converters.py]: https://github.com/elcorto/docwatch/blob/master/src/docwatch/converters.py
 [pandoc]: https://pandoc.org
 [examples/md.md]: https://github.com/elcorto/docwatch/blob/master/examples/md.md
+[examples/docwatch.conf]: https://github.com/elcorto/docwatch/blob/master/examples/docwatch.conf
+[pyini]: https://docs.python.org/3.8/library/configparser.html
