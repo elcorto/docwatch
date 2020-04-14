@@ -1,12 +1,20 @@
 About
 =====
 
+The main use case of this tool is to be a previewer for markdown snippets that
+contain some math (GitLab) in situations where you (i) don't want to write more
+than a few lines of text in the browser instead of your editor and (ii) want to
+avoid using the preview mode in Git{Hub,Lab}. Another use case is light
+technical reports with text, code and simple math that doesn't require
+setting up a TeX project.
+
+Features:
+
 * convert a source file to PDF using [pandoc] (which uses LaTeX)
 * open in a viewer application
 * watch source for changes and re-build automatically
 
 Optional config file `$HOME/.config/docwatch.conf`.
-
 
 Usage
 =====
@@ -210,6 +218,24 @@ $ latexmk -pdf -pvc main.tex
 $ vim src/chapter_foo.tex
 ```
 
+A short Makefile can be handy as well, for instance when using the [minted]
+source code highlighter.
+
+```make
+all:
+    # --shell-escape b/c of minted package
+    latexmk -pdf -pvc -pdflatex="pdflatex --shell-escape %O %S" main.tex
+
+clean: _restclean
+    latexmk -c
+
+allclean: _restclean
+    latexmk -C
+
+_restclean:
+    rm -rf _minted-*
+    rm -f *.bak
+```
 
 Related projects
 ================
@@ -255,3 +281,4 @@ Extending
 [examples/md.md]: https://github.com/elcorto/docwatch/blob/master/examples/md.md
 [examples/docwatch.conf]: https://github.com/elcorto/docwatch/blob/master/examples/docwatch.conf
 [pyini]: https://docs.python.org/3.8/library/configparser.html
+[minted]: https://www.ctan.org/pkg/minted
