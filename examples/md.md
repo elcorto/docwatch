@@ -111,9 +111,16 @@ Display math with `$$...$$`:
 
 $$E = m\,c^2$$
 
-GitLab style fenced math
+GitLab style fenced math works when you use [the matching
+filter](https://github.com/jgm/pandocfilters/blob/master/examples/gitlab_markdown.py).
 
 ```math
+E = m\,c^2
+```
+
+If not then this will be a fenced code block.
+
+```
 E = m\,c^2
 ```
 

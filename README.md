@@ -108,8 +108,25 @@ Dependencies
 * a TeX distro (e.g. `texlive` in Debian)
 
 
-Tips & Tricks
-=============
+Filters
+=======
+
+We support [pandoc filters] (`filters` config option).
+
+pandocfilters
+-------------
+
+The [pandocfilters][pandocfilters-gh] package has a collection of example
+filter scripts. Especially the [GitLab markdown filter][pandocfilters-gh-gitlab]
+lets you render GitLab style math:
+
+    ```math
+    E = m\,c^2
+    ```
+
+However, note that the Debian package `python3-pandocfilters` as well as the
+`pip` package `pandocfilters` doesn't contain that for some reason (packaging
+bug?), so make sure to grab the GitHub version.
 
 Bib(La)TeX
 ----------
@@ -282,3 +299,6 @@ Extending
 [examples/docwatch.conf]: https://github.com/elcorto/docwatch/blob/master/examples/docwatch.conf
 [pyini]: https://docs.python.org/3.8/library/configparser.html
 [minted]: https://www.ctan.org/pkg/minted
+[pandoc filters]: https://pandoc.org/filters.html
+[pandocfilters-gh]: https://github.com/jgm/pandocfilters
+[pandocfilters-gh-gitlab]: https://github.com/jgm/pandocfilters/blob/master/examples/gitlab_markdown.py
