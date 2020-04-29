@@ -8,8 +8,11 @@ from .conf import conf
 
 def run_cmd(cmd):
     try:
-        subprocess.run(cmd, check=True, shell=True,
-                       stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+        subprocess.run(re.sub(r'\s{2,}', ' ', cmd.strip(), flags=re.M),
+                       check=True,
+                       shell=True,
+                       stderr=subprocess.STDOUT,
+                       stdout=subprocess.PIPE)
     except subprocess.CalledProcessError as ex:
         out = ex.stdout.decode() + '\n' + traceback.format_exc()
         stamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
