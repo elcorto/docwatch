@@ -4,6 +4,7 @@ import subprocess
 import tempfile
 import threading
 import time
+import sys
 
 
 from .converters import PandocToPDFConverter
@@ -19,6 +20,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('source_file')
     parser.add_argument('-N', '--no-editor', action='store_true')
+    parser.add_argument('-c', '--print-command', action='store_true')
     args = parser.parse_args()
 
     converter = PandocToPDFConverter
@@ -32,6 +34,11 @@ def main():
         with open(src, 'w') as fd:
             fd.write(f"Hi, I'm your new file '{os.path.basename(fd.name)}'. "
                      f"Delete this line and start hacking.")
+
+    if args.print_command:
+        cv = converter(src=src, tgt=f'output{converter.tgt_ext}')
+        print(cv.make_cmd())
+        sys.exit()
 
     with tempfile.NamedTemporaryFile(suffix=converter.tgt_ext) as fd:
         cv = converter(src=src, tgt=fd.name)

@@ -1,4 +1,5 @@
 import os
+import re
 
 from .conf import conf
 from .subproc import run_cmd
@@ -19,12 +20,15 @@ class PandocConverter:
             assert tgt.endswith(self.tgt_ext)
         self.conf_dct = conf[self.conf_section]
 
-    def convert(self):
+    def make_cmd(self):
         _filters = [os.path.expanduser(p) for p in
                     self.conf_dct['filters'].strip().split()]
         filters = " ".join(f"-F {ff}" for ff in _filters)
         cmd = f"pandoc {filters} {self.options} {self.src}"
-        run_cmd(cmd)
+        return re.sub(r'\s{2,}', ' ', cmd.strip(), flags=re.M)
+
+    def convert(self):
+        run_cmd(self.make_cmd())
 
 
 class PandocToPDFConverter(PandocConverter):
