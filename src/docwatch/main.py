@@ -19,8 +19,12 @@ def get_mtime(fn):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('source_file')
-    parser.add_argument('-N', '--no-editor', action='store_true')
-    parser.add_argument('-c', '--print-command', action='store_true')
+    parser.add_argument('-N', '--no-editor', action='store_true',
+                        help="Only render and open result in viewer, "
+                             "don't open editor")
+    parser.add_argument('-c', '--print-command', action='store_true',
+                        help="Print pandoc command that would be executed "
+                             "and exit")
     args = parser.parse_args()
 
     converter = PandocToPDFConverter

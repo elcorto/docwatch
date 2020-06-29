@@ -11,7 +11,8 @@ setting up a TeX project.
 Features:
 
 * convert a source file to PDF using [pandoc] (which uses LaTeX)
-* open in a viewer application
+* open rendered target (PDF) in a viewer application
+* open source file in an editor
 * watch source for changes and re-build automatically
 
 Optional config file `$HOME/.config/docwatch.conf`.
@@ -19,7 +20,21 @@ Optional config file `$HOME/.config/docwatch.conf`.
 Usage
 =====
 
-This will open `foo.md` in your text editor (config file: `editor`).
+```
+usage: docwatch [-h] [-N] [-c] source_file
+
+positional arguments:
+  source_file
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -N, --no-editor      Only render and open result in viewer, don't open
+                       editor
+  -c, --print-command  Print pandoc command that would be executed and exit
+```
+
+This will open `foo.md` in your text editor (config file: `editor`), build a
+PDF and open that in a viewer application (config file: `pdf_viewer`).
 
 ```sh
 $ docwatch foo.md
@@ -32,9 +47,6 @@ $ docwatch foo.rst
 $ docwatch foo.tex
 ...
 ```
-
-It will also open a pdf viewer (config file: `pdf_viewer`) and display the
-built PDF.
 
 The document is rebuilt whenever it is saved.
 
