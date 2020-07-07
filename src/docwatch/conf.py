@@ -25,11 +25,11 @@ conf_fn = os.path.join(os.environ['HOME'], '.config/docwatch.conf')
 
 def get_conf():
     if os.path.exists(conf_fn):
-        cfp = configparser.ConfigParser()
-        cfp.read(conf_fn)
+        conf_user = configparser.ConfigParser()
+        conf_user.read(conf_fn)
         conf = copy.deepcopy(conf_default)
-        for section in cfp.sections():
-            conf[section].update(cfp[section])
+        for section in conf_user.sections():
+            conf[section].update(conf_user[section])
     else:
         conf = conf_default
     return conf
