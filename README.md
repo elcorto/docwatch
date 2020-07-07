@@ -2,10 +2,11 @@ About
 =====
 
 The main use case of this tool is to be a previewer for markdown snippets that
-contain some math (GitLab) in situations where you (i) don't want to write more
-than a few lines of text in the browser instead of your editor and (ii) want to
-avoid using the preview mode in Git{Hub,Lab}. Another use case is light
-technical reports with text, code and simple math that doesn't require
+contain some TeX math (`pandoc`'s markdown math, or GitLab math using a filter)
+in situations where you (i) don't want to write more than a few lines of text
+in the browser using Git{Hub,Lab} instead of your text editor and (ii) want to
+avoid using the markdown preview mode in Git{Hub,Lab}. Another use case is
+light technical reports with text, code and simple math that doesn't require
 setting up a TeX project.
 
 Features:
@@ -136,9 +137,13 @@ lets you render GitLab style math:
     E = m\,c^2
     ```
 
-However, note that the Debian package `python3-pandocfilters` as well as the
-`pip` package `pandocfilters` doesn't contain that for some reason (packaging
-bug?), so make sure to grab the GitHub version.
+See [examples/docwatch.conf] for how to use that filter. Note that GitLab can
+only render this kind of math syntax, not the `pandoc` `$$...$$` and inline
+`$...$` syntax. GitHub does not support math in markdown at all, AFAIK.
+
+Note that the Debian package `python3-pandocfilters` as well as the `pip`
+package `pandocfilters` don't contain the GitLab filter for some reason
+(packaging bug?), so make sure to grab the GitHub version.
 
 Bib(La)TeX
 ----------
