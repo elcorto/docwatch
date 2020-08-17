@@ -16,8 +16,8 @@ conf_default['DEFAULT'] = dict(
 
 conf_default['pandoc'] = dict(
     pdf_engine='pdflatex',
-    filters=[],
-    latex_options=[],
+    filters='',
+    latex_options='',
     )
 
 conf_fn = os.path.join(os.environ['HOME'], '.config/docwatch.conf')
