@@ -22,16 +22,20 @@ Usage
 =====
 
 ```
-usage: docwatch [-h] [-N] [-c] source_file
+usage: docwatch [-h] [-p] [-N] [-c [TARGET]] SOURCE
 
 positional arguments:
-  source_file
+  SOURCE
 
 optional arguments:
-  -h, --help           show this help message and exit
-  -N, --no-editor      Only render and open result in viewer, don't open
-                       editor
-  -c, --print-command  Print pandoc command that would be executed and exit
+  -h, --help            show this help message and exit
+  -p, --print-command   Print pandoc command that would be executed and exit
+  -N, --no-editor       Only render and open result in viewer, don't open
+                        editor
+  -c [TARGET], --convert [TARGET]
+                        Convert mode. Only run pandoc (see --print-command)
+                        and produce TARGET (optional, temp file used if
+                        omitted, use 'docwatch -c -- SOURCE' in that case).
 ```
 
 This will open `foo.md` in your text editor (config file: `editor`), build a
@@ -41,6 +45,10 @@ PDF and open that in a viewer application (config file: `pdf_viewer`).
 $ docwatch foo.md
 ```
 
+The document is rebuilt whenever it is saved. If the source file `foo.md`
+doesn't exist, it will be created. Logs are written to `/tmp/docwatch.log`
+(config file: `logfile`).
+
 You can use many formats that `pandoc` understands.
 
 ```sh
@@ -49,11 +57,29 @@ $ docwatch foo.tex
 ...
 ```
 
-The document is rebuilt whenever it is saved.
+Options
+-------
 
-If the source file `foo.md` doesn't exist, it will be created. Logs are written
-to `/tmp/docwatch.log` (config file: `logfile`).
+Print the `pandoc` command that is executed, using options from the config
+file.
 
+```sh
+$ docwatch -p foo.md
+pandoc -F pandoc-citeproc -V documentclass=scrartcl -V pagesize=a4 -V
+colorlinks=true -V linkcolor=red -V urlcolor=blue -V citecolor=green -V
+link-citations=true --pdf-engine=pdflatex -V geometry:margin=2cm,bottom=3cm -o
+output.pdf foo.md
+```
+
+Although not the main use case, you can also just build the target w/o opening
+the editor and viewer. Useful for testing if the build works.
+
+```sh
+$ docwatch -c foo.pdf foo.md
+
+# using a temp file instead of foo.pdf
+$ docwatch -c -- foo.md
+```
 
 Example config file
 ===================
@@ -222,7 +248,7 @@ Converting LaTeX source files
 -----------------------------
 
 Is it possible to build LaTeX? Sure, since we support everything `pandoc` can,
-for a single, self-contained TeX files just do
+for a single, self-contained TeX file just do
 
 ```sh
 $ docwatch foo.tex
