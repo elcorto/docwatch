@@ -2,7 +2,6 @@ import argparse
 import os
 import shutil
 import subprocess
-import sys
 import tempfile
 import threading
 import time
@@ -55,15 +54,13 @@ def main():
     src = os.path.expanduser(args.source_file)
     if not os.path.exists(src):
         with open(src, "w") as fd:
-            fd.write(
-                f"Hi, I'm your new file '{os.path.basename(fd.name)}'. "
-                f"Delete this line and start hacking."
-            )
+            fd.write(f"Hi, I'm your new file '{os.path.basename(fd.name)}'. "
+                     f"Delete this line and start hacking.")
 
     if args.print_command:
         cv = converter(src=src, tgt=f"output{converter.tgt_ext}")
         print(cv.make_cmd())
-        sys.exit()
+        return
 
     with tempfile.NamedTemporaryFile(suffix=converter.tgt_ext) as fd:
         cv = converter(src=src, tgt=fd.name)
@@ -96,6 +93,5 @@ def main():
                     target=target_watch_convert
                 )
                 thread_watch_convert.start()
-                subprocess.run(
-                    f"{conf_dct['editor']} {cv.src}", shell=True, check=True
-                )
+                subprocess.run(f"{conf_dct['editor']} {cv.src}",
+                               shell=True, check=True)
