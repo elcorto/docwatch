@@ -157,15 +157,20 @@ pandocfilters
 
 The [pandocfilters][pandocfilters-gh] package has a collection of example
 filter scripts. Especially the [GitLab markdown filter][pandocfilters-gh-gitlab]
-lets you render GitLab style math:
+lets you render [GitLab style math][gl-math]. See [examples/docwatch.conf] for how to
+activate that filter. Use this to create equations on a new line (`$$...$$` in
+`pandoc` markdown and LaTeX)
 
     ```math
     E = m\,c^2
     ```
 
-See [examples/docwatch.conf] for how to use that filter. Note that GitLab can
-only render this kind of math syntax, not the `pandoc` `$$...$$` and inline
-`$...$` syntax. GitHub does not support math in markdown at all, AFAIK.
+or this quirky syntax (note the backticks in ``$`...`$``, `$...$` in `pandoc`
+markdown and LaTeX) for inline.
+
+    $`E= m\,c^2`$
+
+GitHub does not support math in markdown at all, AFAIK.
 
 Note that the Debian package `python3-pandocfilters` as well as the `pip`
 package `pandocfilters` don't contain the GitLab filter for some reason
@@ -345,3 +350,4 @@ Extending
 [pandoc filters]: https://pandoc.org/filters.html
 [pandocfilters-gh]: https://github.com/jgm/pandocfilters
 [pandocfilters-gh-gitlab]: https://github.com/jgm/pandocfilters/blob/master/examples/gitlab_markdown.py
+[gl-math]: https://docs.gitlab.com/ee/user/markdown.html#math
