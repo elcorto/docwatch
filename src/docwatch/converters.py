@@ -27,8 +27,8 @@ class PandocConverter:
         cmd = f"pandoc {filters} {self.options} {self.src}"
         return re.sub(r'\s{2,}', ' ', cmd.strip(), flags=re.M)
 
-    def convert(self):
-        run_cmd(self.make_cmd())
+    def convert(self, onerror='log'):
+        run_cmd(self.make_cmd(), onerror=onerror)
 
 
 class PandocToPDFConverter(PandocConverter):

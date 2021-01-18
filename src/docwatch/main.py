@@ -66,8 +66,6 @@ def main():
         cv = converter(src=src, tgt=fd.name)
 
         def target_viewer():
-            # initial convert only
-            cv.convert()
             run_cmd(f"{conf_dct['pdf_viewer']} {cv.tgt}")
 
         def target_watch_convert():
@@ -80,10 +78,11 @@ def main():
                 time.sleep(0.5)
 
         if args.convert is not None:
-            cv.convert()
+            cv.convert(onerror='fail')
             if args.convert != "":
                 shutil.copy(cv.tgt, args.convert)
         else:
+            cv.convert(onerror='fail')
             thread_viewer = threading.Thread(target=target_viewer)
             thread_viewer.start()
             if args.no_editor:
