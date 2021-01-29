@@ -15,6 +15,7 @@ setup(
     url='https://github.com/elcorto/docwatch',
     author='Steve Schmerler',
     author_email='git@elcorto.com',
+    python_requires='>=3.8',
     license='BSD 3-Clause',
     keywords='pandoc preview markdown latex pdf',
     package_dir={'': 'src'},
