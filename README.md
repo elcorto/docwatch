@@ -76,7 +76,7 @@ output.pdf foo.md
 ```
 
 Although not the main use case, you can also just build the target w/o opening
-the editor and viewer. Useful for testing if the build works.
+the editor and viewer.
 
 ```sh
 $ docwatch -c foo.pdf foo.md
@@ -111,12 +111,16 @@ latex_options=
 Error handling
 ==============
 
-All `pandoc` and LaTeX errors are logged to `logfile`. Therefore, when you
-change something in `foo.md`, save the file, but the PDF is not being rebuilt,
-then you probably made a (LaTeX) mistake, which made the `pandoc` command fail.
-Then look into `logfile`. Check the time stamp in `logfile` to make sure the
-error is related to the last change to the source file.
+When you start `docwatch`, build errors are dumped to the terminal and we exit.
+Once the initial build passed and your editor is open, all further (`pandoc`
+and LaTeX) errors are logged to `logfile`, else the terminal error log would
+mess up editors such as `vim`.
 
+Therefore, when you change something in `foo.md`, save the file, but the PDF is
+not being rebuilt, then you probably made a (LaTeX) mistake, which made the
+`pandoc` command fail. Then look into `logfile`. Check the time stamp in
+`logfile` to make sure the error is related to the last change to the source
+file.
 
 File formats
 ============
