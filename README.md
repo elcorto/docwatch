@@ -22,20 +22,24 @@ Usage
 =====
 
 ```
-usage: docwatch [-h] [-p] [-N] [-c [TARGET]] SOURCE
+usage: docwatch [-h] [-p] [-c [TARGET]] [-o EXTRA_OPTS] SOURCE
 
 positional arguments:
   SOURCE
 
 optional arguments:
   -h, --help            show this help message and exit
-  -p, --print-command   Print pandoc command that would be executed and exit
-  -N, --no-editor       Only render and open result in viewer, don't open
-                        editor
+  -p, --print-command   Print converter (e.g. pandoc) command that would be
+                        executed and exit.
   -c [TARGET], --convert [TARGET]
-                        Convert mode. Only run pandoc (see --print-command)
+                        Convert mode. Only run converter (see --print-command)
                         and produce TARGET (optional, temp file used if
-                        omitted, use 'docwatch -c -- SOURCE' in that case).
+                        omitted, use 'docwatch -c -- SOURCE' or 'docwatch
+                        SOURCE -c' in that case).
+  -o EXTRA_OPTS, --extra-opts EXTRA_OPTS
+                        Additional options to pass to the converter, e.g. for
+                        pandoc: docwatch -o '--bibliography=/path/to/lit.bib'
+                        SOURCE. Mind the quoting.
 ```
 
 This will open `foo.md` in your text editor (config file: `editor`), build a
