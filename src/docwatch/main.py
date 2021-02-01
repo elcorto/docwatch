@@ -27,13 +27,6 @@ def main():
                 exit.""",
     )
     parser.add_argument(
-        "-N",
-        "--no-editor",
-        action="store_true",
-        default=False,
-        help="Only render and open result in viewer, don't open editor.",
-    )
-    parser.add_argument(
         "-c",
         "--convert",
         nargs="?",
@@ -108,13 +101,8 @@ def main():
             cv.convert(onerror="fail")
             thread_viewer = threading.Thread(target=target_viewer)
             thread_viewer.start()
-            if args.no_editor:
-                target_watch_convert()
-            else:
-                thread_watch_convert = threading.Thread(
-                    target=target_watch_convert
-                )
-                thread_watch_convert.start()
-                subprocess.run(f"{conf_dct['editor']} {cv.src}",
-                               shell=True,
-                               check=True)
+            thread_watch_convert = threading.Thread(target=target_watch_convert)
+            thread_watch_convert.start()
+            subprocess.run(f"{conf_dct['editor']} {cv.src}",
+                           shell=True,
+                           check=True)
