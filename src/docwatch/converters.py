@@ -1,5 +1,6 @@
 import os
 import re
+from functools import cached_property
 
 from .conf import conf
 from .subproc import run_cmd
@@ -21,7 +22,8 @@ class PandocConverter:
             assert tgt.endswith(self.tgt_ext)
         self.conf_dct = conf[self.conf_section]
 
-    def make_cmd(self):
+    @cached_property
+    def cmd(self):
         _filters = [
             os.path.expanduser(p)
             for p in self.conf_dct["filters"].strip().split()
@@ -31,7 +33,7 @@ class PandocConverter:
         return re.sub(r"\s{2,}", " ", cmd.strip(), flags=re.M)
 
     def convert(self, onerror="log"):
-        run_cmd(self.make_cmd(), onerror=onerror)
+        run_cmd(self.cmd, onerror=onerror)
 
 
 class PandocToPDFConverter(PandocConverter):
@@ -51,6 +53,7 @@ class PandocToPDFConverter(PandocConverter):
         _latex_options = self.conf_dct["latex_options"].strip().split()
         latex_options = " ".join(f"-V {opt}" for opt in _latex_options)
         self.options += latex_options
+
         # We need to use a suffix self.tgt_ext = '.pdf' here in the PDF case
         # b/c of the quirky pandoc behavior that in order to produce a PDF by
         # running latex, we *have* to use

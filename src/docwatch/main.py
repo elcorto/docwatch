@@ -75,7 +75,7 @@ def main():
         cv = converter(src=src,
                        tgt=f"output{converter.tgt_ext}",
                        extra_opts=args.extra_opts)
-        print(cv.make_cmd())
+        print(cv.cmd)
         return
 
     with tempfile.NamedTemporaryFile(suffix=converter.tgt_ext) as fd:
