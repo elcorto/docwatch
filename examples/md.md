@@ -1,11 +1,32 @@
 ---
 bibliography: lit.bib
 reference-section-title: Refs
+csl: ieee-with-url.csl
+link-citation: true
+
+xnos-capitalise: true
+tablenos-plus-name: Tab.
+
+header-includes:
+- |
+  ```{=latex}
+  \usepackage{bm}
+  \usepackage{xspace}
+  \newcommand{\ve}[1]{\ensuremath{\bm{\mathit{#1}}}\xspace}
+  ```
 ---
 
 # Images
 
-![image w/ caption](pic.jpg){width=50%}
+![image w/ caption, md syntax](pic.jpg){width=50% #fig:fry-md}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.3\textwidth]{pic.jpg}
+    \caption{We can use plain TeX as welll!11!!!}
+    \label{fig:fry-tex}
+\end{figure}
 
 # Code
 
@@ -111,6 +132,18 @@ Display math with `$$...$$`:
 
 $$E = m\,c^2$$
 
+Also plain TeX works, awesome!
+
+\begin{equation}
+    E = m\,c^2
+\end{equation}
+
+Turn off numbering.
+
+\begin{equation*}
+    E = m\,c^2
+\end{equation*}
+
 GitLab style fenced math works when you use [the matching
 filter](https://github.com/jgm/pandocfilters/blob/master/examples/gitlab_markdown.py).
 
@@ -126,35 +159,84 @@ E = m\,c^2
 
 # Labels and references
 
+We recommend `pandoc-xnos`.
+
+
+## Equations
+
+Using inline math `$...$` but with labels
+
+$E = m\,c^2$ {#eq:some-math}
+
+is treated like display style math `$$...$$`
+
 $$E = m\,c^2$$ {#eq:foo}
 
 `pandoc-xnos` labels like `{#eq:foo}` only work for `$$...$$` style math, not GitLab
 style.
 
-We can reference equations using `{@eq:foo}` {@eq:foo} or `@eq:foo` @eq:foo or
-`{+@eq:foo}` {+@eq:foo} or `+@eq:foo` +@eq:foo.
 
-Using inline math but with labels
-
-$E = m\,c^2$ {#eq:some-math}
-
-is treated like display style math
-
-$$E = m\,c^2$$ {#eq:some-math}
-
-The `+@eq:foo` syntax with `+` works only with `pandoc-xnos`. In
-`pandoc-crossref`, you need to use an uppercase first letter `@Eq:foo`.
+## Tables and figures
 
 a|b
 -|-
 c|d
 
-Table: table with label {#tbl:table1}
+Table: table with label {#tbl:a_table}
 
-![small image with label](pic.jpg){width=20% #fig:figure1}
+![small image with label and citation [@focker_2019]](pic.jpg){width=20% #fig:fry-md-small}
 
-We can also cite tables (see +@tbl:table1) and figures (+@fig:figure1).
+
+## Ref syntax
+
+The prefixes `eq:`, `fig:` and `tbl:` are mandatory.
+
+ref syntax | result
+-|-
+`{@eq:foo}`             | {@eq:foo}
+`@eq:foo`               | @eq:foo
+`+@eq:foo`              | +@eq:foo
+`*@eq:foo`              | *@eq:foo
+|
+`+@fig:fry-md`          | +@fig:fry-md
+`+@fig:fry-tex`         | +@fig:fry-tex
+`+@fig:fry-md-small`    | +@fig:fry-md-small
+|
+`+@tbl:a_table`         | +@tbl:a_table
+
+
+## "plus syntax"
+
+Customizations set in metadata block:
+
+* `xnos-capitalise: true`: "eq. 3" -> "Eq. 3"
+* `tablenos-plus-name: Tab`: "Table 3" -> "Tab. 3"
+
+The `+@eq:foo` syntax with `+` works only with `pandoc-xnos`. In
+`pandoc-crossref`, you need to use an uppercase first letter `@Eq:foo`.
+
 
 # BibTeX
 
-Using `pandoc-citeproc`, we cite [@focker_2019].
+Using `pandoc-citeproc`:
+
+ref syntax | result
+-|-
+`[@focker_2019]`            | [@focker_2019]
+|
+`[@focker_2019;@doe_2021]`  | [@focker_2019;@doe_2021]
+|
+`[@focker_2019 23]`         | [@focker_2019 23]
+`[@focker_2019 p. 23]`      | [@focker_2019 p. 23]
+`[@focker_2019, 23]`        | [@focker_2019, 23]
+`[@focker_2019, p. 23]`     | [@focker_2019, p. 23]
+|
+`[@focker_2019 Sec. 42]`    | [@focker_2019 Sec. 42]
+`[@focker_2019 sec. 42]`    | [@focker_2019 sec. 42]
+`[@focker_2019 s. 42]`      | [@focker_2019 s. 42]
+|
+`[@focker_2019 ch. 42]`     | [@focker_2019 ch. 42]
+|
+`[@focker_2019; Sec. 42]`   | [@focker_2019; Sec. 42]
+`[@focker_2019; 23]`        | [@focker_2019; 23]
+`[@focker_2019; arb. text]` | [@focker_2019; arb. text]

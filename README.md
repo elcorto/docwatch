@@ -1,22 +1,29 @@
+<p align="center">
+    <img src="examples/pic.jpg" width="70%">
+</p>
+
 About
 =====
 
-The main use case of this tool is to be a previewer for markdown snippets that
-contain some TeX math (`pandoc`'s markdown math, or GitLab math using a filter)
-in situations where you (i) don't want to write more than a few lines of text
-in the browser using Git{Hub,Lab} instead of your text editor and (ii) want to
-avoid using the markdown preview mode in Git{Hub,Lab}. Another use case is
-light technical reports with text, code and simple math that doesn't require
-setting up a TeX project.
-
 Features:
 
-* convert a source file to PDF using [pandoc] (which uses LaTeX)
+* convert a source file to PDF using [pandoc] by default (which uses LaTeX)
 * open rendered target (PDF) in a viewer application
 * open source file in an editor
 * watch source for changes and re-build automatically
 
 Optional config file `$HOME/.config/docwatch.conf`.
+
+The main use case of this tool is to be a previewer for text markup source
+documents (e.g. markdown, rst, tex, but "any" format works, see below) that
+contain some TeX math (in markdown: `pandoc`'s markdown math, or GitLab math
+using a filter) in situations where you want to write text using your text
+editor instead of the browser using GitHub/GitLab or hackmd/codimd. Even though
+the latter two have pretty instant previews and key bindings for several
+editors, it's still coding in the browser which is not fun, and you don't have
+access to your editor's full config. Another use case is light technical
+reports with text, code and simple math that doesn't require setting up a TeX
+project.
 
 Usage
 =====
@@ -211,13 +218,19 @@ cross-referencing.
 
 ```
 Here be math
-$$\alpha = \int\sin(x)\,\Gamma(\phi)\,d\phi$$ {#eq:alpha}
+$$\alpha = \int\sin(x)\,\Gamma(\phi)\,d\phi$$ {#eq:foo}
 
-which we can reference in @eq:alpha.
+which we can reference in @eq:foo.
 ```
 
+Also works for figures `{#fig:foo}` and tables `{#tbl:foo}`.
+
 Both filters have slightly different syntax, but the example here should work
-in both.
+in both. We recommend `pandoc-xons`, which has nice support for naming
+references automatically, e.g. `+@eq:foo` becomes "eq. 1" instead just "1".
+
+Please see also [examples/md.md] for much more, such as customizations
+settings in the metadata header (e.g. `xnos-capitalise`).
 
 Install the complete `pandoc-xons` family of filters with `pip install
 pandoc-eqnos pandoc-fignos pandoc-secnos pandoc-tablenos pandoc-xnos`. You can
@@ -225,7 +238,6 @@ leave out any package (e.g. `pandoc-secnos` if you don't want section labels)
 and still use `pandoc-xnos` as a filter, which will use all installed
 functionality.
 
-See also [examples/md.md] for more.
 
 Notes
 =====
@@ -238,11 +250,15 @@ what the target format is. Some tools such as LaTeX don't react too well to
 empty files. For this reason we add a dummy line to the source file should it
 not exist.
 
+Missing filters
+---------------
+
+When none of `pandoc-citeproc` or the `pandoc-xnos` filters are used, then
+cite/ref syntax such as `[@knuth1997]` `+@eq:foo` is just rendered as is
+without error.
+
 pandoc-citeproc & bibliography
 ------------------------------
-
-When the filter `pandoc-citeproc` is not used, the cite syntax will be just
-rendered as is without error.
 
 When the bibliography file is specified by a relative path such as `lit.bib` or
 `../other/dir/lit.bib`, then `docwatch` must be started from the source file's
@@ -330,8 +346,9 @@ Why this package?
 * `docwatch` is independent of
     * the source file format (not only markdown, anything `pandoc` can digest
       (w/o `-f format`))
-    * the editor (stand-alone tool, not yet another vim plugin)
-    * the viewer
+    * the editor (stand-alone tool, not yet another vim plugin, config file:
+      `editor`)
+    * the viewer (config file: `pdf_viewer`)
 * PDF output
 * support for pandoc filters enables basic TeX features w/o writing TeX
 
@@ -340,7 +357,9 @@ Extending
 
 * any output other than PDF that `pandoc` can produce can be added by adding
   more converters (see [converters.py])
-* one can also define converters that don't use pandoc at all
+* one can also define converters that *don't use pandoc at all* and thus make
+  `docwatch` independent of `pandoc` ... but it is pretty powerful, so there is
+  really no ned to do that
 * one can easily add a feature to pass `-f format` to `pandoc` but ATM we don't
   need that (using mainly md, tex (single file), rst)
 
