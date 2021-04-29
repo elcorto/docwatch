@@ -24,10 +24,7 @@ def get_mtime(fn: str):
 
 
 def main():
-    desc = """Convert SOURCE_FILE to PDF using pandoc. If SOURCE_FILE is
-              omitted, a temp file (default markdown, see -f/--source-format)
-              will be used."""
-    parser = argparse.ArgumentParser(description=desc)
+    parser = argparse.ArgumentParser()
     parser.add_argument("source_file", metavar="SOURCE_FILE", nargs="?")
     parser.add_argument(
         "-p",
@@ -71,7 +68,7 @@ def main():
     )
     args = parser.parse_args()
 
-    # pandoc-specific
+    # That is (should be :)) the only pandoc-specific hard coded line.
     converter = PandocToPDFConverter
 
     conf_dct = conf[converter.conf_section]
@@ -93,7 +90,7 @@ def main():
             src=args.source_file
                 if args.source_file is not None
                 else "SOURCE_FILE",
-            tgt=f"OUTPUT.{converter.tgt_ext}",
+            tgt=f"TARGET.{converter.tgt_ext}",
             extra_opts=args.extra_opts,
             src_ext=args.source_format,
         )
