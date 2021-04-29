@@ -16,7 +16,7 @@ def get_src_context(src: str = None, src_ext: str = ""):
     if src is None:
         return tempfile.NamedTemporaryFile(suffix=f".{_src_ext}", mode="w+")
     else:
-        return open(os.path.expanduser(src), mode="w+")
+        return open(os.path.expanduser(src), mode="a+")
 
 
 def get_mtime(fn: str):
