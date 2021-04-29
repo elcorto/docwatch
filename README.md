@@ -8,31 +8,32 @@ About
 Features:
 
 * convert a source file to PDF using [pandoc] by default (which uses LaTeX)
-* open rendered target (PDF) in a viewer application
+* open rendered target (PDF temp file) in a viewer application
 * open source file in an editor
 * watch source for changes and re-build automatically
 
 Optional config file `$HOME/.config/docwatch.conf`.
 
 The main use case of this tool is to be a previewer for text markup source
-documents (e.g. markdown, rst, tex, but "any" format works, see below) that
+documents (e.g. markdown, rst, tex, .. any format that `pandoc` supports) that
 contain some TeX math (in markdown: `pandoc`'s markdown math, or GitLab math
 using a filter) in situations where you want to write text using your text
 editor instead of the browser using GitHub/GitLab or hackmd/codimd. Even though
-the latter two have pretty instant previews and key bindings for several
+the last two have pretty instant previews and key bindings for several
 editors, it's still coding in the browser which is not fun, and you don't have
 access to your editor's full config. Another use case is light technical
-reports with text, code and simple math that doesn't require setting up a TeX
+reports with text, code and simple math that don't require setting up a TeX
 project.
 
 Usage
 =====
 
 ```
-usage: docwatch [-h] [-p] [-c [TARGET]] [-o EXTRA_OPTS] SOURCE
+usage: docwatch [-h] [-p] [-c [TARGET]] [-o EXTRA_OPTS] [-f SOURCE_FORMAT]
+                [SOURCE_FILE]
 
 positional arguments:
-  SOURCE
+  SOURCE_FILE
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -41,16 +42,25 @@ optional arguments:
   -c [TARGET], --convert [TARGET]
                         Convert mode. Only run converter (see --print-command)
                         and produce TARGET (optional, temp file used if
-                        omitted, use 'docwatch -c -- SOURCE' or 'docwatch
-                        SOURCE -c' in that case).
+                        omitted, use 'docwatch -c -- SOURCE_FILE' or 'docwatch
+                        SOURCE_FILE -c' in that case).
   -o EXTRA_OPTS, --extra-opts EXTRA_OPTS
                         Additional options to pass to the converter, e.g. for
                         pandoc: docwatch -o '--bibliography=/path/to/lit.bib'
-                        SOURCE. Mind the quoting.
+                        SOURCE_FILE. Mind the quoting. Some shells mess up
+                        quoting in the short form -f, using the long form as
+                        in --extra-opts='-f rst' then helps.
+  -f SOURCE_FORMAT, --source-format SOURCE_FORMAT
+                        Format of SOURCE_FILE (file type, typically file
+                        extension). Same as docwatch --extra-opts='-f
+                        SOURCE_FORMAT'. Passed to pandoc (-f/--from) if used.
+                        Else (default) we use pandoc's automatic detection.
+                        Use in combination with omitted SOURCE_FILE, e.g.
+                        "docwatch -f rst" to edit a temp rst file.
 ```
 
 This will open `foo.md` in your text editor (config file: `editor`), build a
-PDF and open that in a viewer application (config file: `pdf_viewer`).
+PDF (temp file) and open that in a viewer application (config file: `pdf_viewer`).
 
 ```sh
 $ docwatch foo.md
@@ -60,37 +70,78 @@ The document is rebuilt whenever it is saved. If the source file `foo.md`
 doesn't exist, it will be created. Logs are written to `/tmp/docwatch.log`
 (config file: `logfile`).
 
-You can use many formats that `pandoc` understands.
+You can use many formats that `pandoc` understands automatically.
 
 ```sh
+$ docwatch foo.md
 $ docwatch foo.rst
 $ docwatch foo.tex
 ...
 ```
 
-Options
--------
+Or specify the format explicitly (as in `pandoc -f markdown`).
 
-Print the `pandoc` command that is executed, using options from the config
-file.
+```sh
+$ docwatch -f markdown foo
+```
+
+If you just want to quickly create a text snippet *without specifying and
+saving* the source file, use
+
+```sh
+$ docwatch
+```
+
+without arguments. This will use a temp source file (default: markdown). Use
+`-f` to specify the format.
+
+```sh
+$ docwatch -f rst
+```
+
+Print the `pandoc` command that is executed, which includes all options defined
+in the config file.
 
 ```sh
 $ docwatch -p foo.md
 pandoc -F pandoc-citeproc -V documentclass=scrartcl -V pagesize=a4 -V
 colorlinks=true -V linkcolor=red -V urlcolor=blue -V citecolor=green -V
 link-citations=true --pdf-engine=pdflatex -V geometry:margin=2cm,bottom=3cm -o
-output.pdf foo.md
+TARGET.pdf foo.md
 ```
 
+Less important options
+----------------------
+
 Although not the main use case, you can also just build the target w/o opening
-the editor and viewer.
+the editor and viewer, which means all we do is use the `pandoc` command (see
+`docwatch -p`) to built the target PDF.
 
 ```sh
 $ docwatch -c foo.pdf foo.md
-
-# using a temp file instead of foo.pdf
-$ docwatch -c -- foo.md
 ```
+
+You may use `-c` without specifying a target file.
+
+```sh
+$ docwatch -c -- foo.md
+$ docwatch foo.md -c
+```
+
+In this case a temp target file will be used (which you won't see). Use this to
+check if the build works without opening the source in an editor and the target
+in a pdf viewer.
+
+A funny edge case:
+
+```sh
+$ docwatch -c
+```
+
+This again won't open editor and viewer and will not produce any file on disk.
+It will use a temp source and target file, build the target file and then
+delete both again (since they are temp files).
+
 
 Example config file
 ===================
@@ -129,22 +180,6 @@ not being rebuilt, then you probably made a (LaTeX) mistake, which made the
 `logfile` to make sure the error is related to the last change to the source
 file.
 
-File formats
-============
-
-Source: We don't do source file format detection at all, the file is passed
-directly to `pandoc`, as in
-
-```sh
-$ pandoc -o foo.pdf foo.md
-```
-
-Therefore, the source file can be anything `pandoc` can handle w/o specifying
-`pandoc -f format`.
-
-Target: We only do conversion to PDF.
-
-See "Extending" below for more.
 
 Install
 =======
@@ -171,17 +206,19 @@ pandocfilters
 -------------
 
 The [pandocfilters][pandocfilters-gh] package has a collection of example
-filter scripts. Especially the [GitLab markdown filter][pandocfilters-gh-gitlab]
-lets you render [GitLab style math][gl-math]. See [examples/docwatch.conf] for how to
-activate that filter. Use this to create equations on a new line (`$$...$$` in
-`pandoc` markdown and LaTeX)
+filter scripts.
+
+Especially the [GitLab markdown filter][pandocfilters-gh-gitlab] lets you
+render [GitLab style math][gl-math]. See [examples/docwatch.conf] for how to
+activate that filter. GitLab style math comes in two forms. Use this to create
+equations on a new line (`pandoc` markdown and LaTeX: `$$...$$`)
 
     ```math
     E = m\,c^2
     ```
 
-or this quirky syntax (note the backticks in ``$`...`$``, `$...$` in `pandoc`
-markdown and LaTeX) for inline.
+or this quirky syntax for inline (note the backticks in ``$`...`$``, pandoc
+markdown and LaTeX: `$...$`).
 
     $`E= m\,c^2`$
 
@@ -329,9 +366,10 @@ _restclean:
 Related projects
 ================
 
-Github markdown:
+(Github) markdown, html preview
 
 * <https://github.com/joeyespo/grip>
+* <https://github.com/crdx/docwatch>  (the name seems to be popular :))
 
 vim plugins:
 
@@ -344,13 +382,12 @@ Why this package?
 -----------------
 
 * `docwatch` is independent of
-    * the source file format (not only markdown, anything `pandoc` can digest
-      (w/o `-f format`))
-    * the editor (stand-alone tool, not yet another vim plugin, config file:
-      `editor`)
-    * the viewer (config file: `pdf_viewer`)
+    * the source file format: not only markdown, anything `pandoc` can digest
+    * the editor: stand-alone tool, not yet another vim plugin, config file:
+      `editor`
+    * the viewer: config file: `pdf_viewer`
 * PDF output
-* support for pandoc filters enables basic TeX features w/o writing TeX
+* support for pandoc filters
 
 Extending
 =========
@@ -359,9 +396,7 @@ Extending
   more converters (see [converters.py])
 * one can also define converters that *don't use pandoc at all* and thus make
   `docwatch` independent of `pandoc` ... but it is pretty powerful, so there is
-  really no ned to do that
-* one can easily add a feature to pass `-f format` to `pandoc` but ATM we don't
-  need that (using mainly md, tex (single file), rst)
+  really no need to do that
 
 
 [pandoc-citeproc]: https://github.com/jgm/pandoc-citeproc
