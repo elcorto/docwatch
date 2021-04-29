@@ -7,7 +7,9 @@ from .conf import conf
 
 
 def run_cmd(cmd, onerror="log"):
-    assert onerror in (valid := ["log", "fail"]), f"{onerror=} not one of {valid}"
+    assert onerror in (
+        valid := ["log", "fail"]
+    ), f"{onerror=} not one of {valid}"
     try:
         subprocess.run(
             re.sub(r"\s{2,}", " ", cmd.strip(), flags=re.M),

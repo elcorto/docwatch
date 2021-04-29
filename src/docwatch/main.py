@@ -11,21 +11,23 @@ from .conf import conf
 from .subproc import run_cmd
 
 
-def get_src_context(source_file=None, source_format="md"):
-    if source_file is None:
-        return tempfile.NamedTemporaryFile(
-            suffix="." + source_format, mode="w+"
-        )
+def get_src_context(src: str = None, src_ext: str = ""):
+    _src_ext = src_ext if src_ext != "" else "markdown"
+    if src is None:
+        return tempfile.NamedTemporaryFile(suffix=f".{_src_ext}", mode="w+")
     else:
-        return open(os.path.expanduser(source_file), mode="w+")
+        return open(os.path.expanduser(src), mode="w+")
 
 
-def get_mtime(fn):
+def get_mtime(fn: str):
     return os.stat(fn).st_mtime
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    desc = """Convert SOURCE_FILE to PDF using pandoc. If SOURCE_FILE is
+              omitted, a temp file (default markdown, see -f/--source-format)
+              will be used."""
+    parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("source_file", metavar="SOURCE_FILE", nargs="?")
     parser.add_argument(
         "-p",
@@ -44,16 +46,28 @@ def main():
         const="",
         help="""Convert mode. Only run converter (see --print-command) and
                 produce TARGET (optional, temp file used if omitted, use
-                '%(prog)s -c -- SOURCE_FILE' or '%(prog)s SOURCE_FILE -c' in that
-                case).""",
+                '%(prog)s -c -- SOURCE_FILE' or '%(prog)s SOURCE_FILE -c' in
+                that case).""",
     )
     parser.add_argument(
         "-o",
         "--extra-opts",
         default="",
         help="""Additional options to pass to the converter, e.g. for pandoc:
-                %(prog)s -o '--bibliography=/path/to/lit.bib' SOURCE_FILE.
-                Mind the quoting.""",
+                %(prog)s -o '--bibliography=/path/to/lit.bib' SOURCE_FILE. Mind
+                the quoting. Some shells mess up quoting in the short form -f,
+                using the long form as in --extra-opts='-f rst' then helps.""",
+    )
+    parser.add_argument(
+        "-f",
+        "--source-format",
+        default="",
+        help="""Format of SOURCE_FILE (file type, typically file extension).
+                Same as %(prog)s --extra-opts='-f SOURCE_FORMAT'. Passed to
+                pandoc (-f/--from) if used. Else (default) we use pandoc's
+                automatic detection. Use in combination with omitted
+                SOURCE_FILE, e.g. "%(prog)s -f rst" to edit a temp rst
+                file.""",
     )
     args = parser.parse_args()
 
@@ -74,21 +88,29 @@ def main():
     #   cv = converter(tgt=...)
     # but that breaks access to converter.some_attrs (e.g.
     # converter.conf_section)
-    _src = args.source_file if args.source_file is not None else "SOURCE_FILE"
     if args.print_command:
         cv = converter(
-            src=_src,
-            tgt=f"OUTPUT{converter.tgt_ext}",
+            src=args.source_file
+                if args.source_file is not None
+                else "SOURCE_FILE",
+            tgt=f"OUTPUT.{converter.tgt_ext}",
             extra_opts=args.extra_opts,
+            src_ext=args.source_format,
         )
         print(cv.cmd)
         return
 
-    with tempfile.NamedTemporaryFile(suffix=converter.tgt_ext) as fd_tgt, \
-         get_src_context(source_file=args.source_file) as fd_src:
+    with tempfile.NamedTemporaryFile(
+        suffix=f".{converter.tgt_ext}"
+    ) as fd_tgt, get_src_context(
+        src=args.source_file, src_ext=args.source_format
+    ) as fd_src:
 
         cv = converter(
-            src=fd_src.name, tgt=fd_tgt.name, extra_opts=args.extra_opts
+            src=fd_src.name,
+            tgt=fd_tgt.name,
+            extra_opts=args.extra_opts,
+            src_ext=args.source_format,
         )
 
         if os.stat(fd_src.name).st_size == 0:
@@ -96,6 +118,7 @@ def main():
                 f"Hi, I'm your new file '{os.path.basename(fd_src.name)}'. "
                 f"Delete this line and start hacking."
             )
+            # Actually write to file now before we hand fd_src down.
             fd_src.flush()
 
         def target_viewer():
@@ -111,7 +134,7 @@ def main():
                         cv.convert()
                     time.sleep(0.5)
             except FileNotFoundError:
-                # Only when: source_file is NamedTemporaryFile and editor is
+                # Only when: src is NamedTemporaryFile().name and editor is
                 # closed before viewer. Then get_mtime() will raise
                 # FileNotFoundError since the temp file was removed. Maybe we
                 # should log this case (logfile).
