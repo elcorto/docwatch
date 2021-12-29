@@ -18,11 +18,11 @@ The main use case of this tool is to be a previewer for text markup source
 documents (e.g. markdown, rst, tex, .. any format that `pandoc` supports) that
 contain some TeX math (in markdown: `pandoc`'s markdown math, or GitLab math
 using a filter) in situations where you want to write text using your text
-editor instead of the browser using GitHub/GitLab or hackmd/codimd. Even though
+editor instead of the browser using GitHub/GitLab or [hackmd]/[hedgedoc]. Even though
 the last two have pretty instant previews and key bindings for several
 editors, it's still coding in the browser which is not fun, and you don't have
 access to your editor's full config. Another use case is light technical
-reports with text, code and simple math that don't require setting up a TeX
+reports with text, code and simple math that don't justify setting up a TeX
 project.
 
 Usage
@@ -366,9 +366,10 @@ _restclean:
 Related projects
 ================
 
-(Github) markdown, html preview
+html preview
 
-* <https://github.com/joeyespo/grip>
+* [hedgedoc]/[hackmd]
+* <https://github.com/joeyespo/grip> (GitHub MD flavor)
 * <https://github.com/crdx/docwatch>  (the name seems to be popular :))
 
 vim plugins:
@@ -413,3 +414,5 @@ Extending
 [pandocfilters-gh]: https://github.com/jgm/pandocfilters
 [pandocfilters-gh-gitlab]: https://github.com/jgm/pandocfilters/blob/master/examples/gitlab_markdown.py
 [gl-math]: https://docs.gitlab.com/ee/user/markdown.html#math
+[hedgedoc]: https://hedgedoc.org
+[hackmd]: https://hackmd.io
