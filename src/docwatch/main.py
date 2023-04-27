@@ -88,8 +88,8 @@ def main():
     if args.print_command:
         cv = converter(
             src=args.source_file
-                if args.source_file is not None
-                else "SOURCE_FILE",
+            if args.source_file is not None
+            else "SOURCE_FILE",
             tgt=f"TARGET.{converter.tgt_ext}",
             extra_opts=args.extra_opts,
             src_ext=args.source_format,
@@ -102,7 +102,6 @@ def main():
     ) as fd_tgt, get_src_context(
         src=args.source_file, src_ext=args.source_format
     ) as fd_src:
-
         cv = converter(
             src=fd_src.name,
             tgt=fd_tgt.name,

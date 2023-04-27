@@ -17,8 +17,9 @@ class PandocConverter:
 
     conf_section = "pandoc"
 
-    def __init__(self, src: str, tgt: str, extra_opts: str = "", src_ext:
-            str=""):
+    def __init__(
+        self, src: str, tgt: str, extra_opts: str = "", src_ext: str = ""
+    ):
         self.src = src
         self.tgt = tgt
         self.extra_opts = extra_opts
