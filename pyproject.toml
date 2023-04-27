@@ -1,0 +1,42 @@
+[project]
+name = "docwatch"
+version = "0.0.0"
+description = "Convert, preview, watch and rebuild a source document with pandoc"
+readme = "README.md"
+keywords = ["pandoc", "preview", "markdown", "latex", "pdf"]
+requires-python = ">=3.8"
+authors = [
+    {name="Steve Schmerler", email="git@elcorto.com"}
+]
+license = {file="LICENSE"}
+
+
+[project.urls]
+"Homepage" = "https://github.com/elcorto/docwatch"
+
+
+[project.scripts]
+docwatch = "docwatch.main:main"
+
+
+[project.optional-dependencies]
+dev = ["pre-commit"]
+
+
+[tool.black]
+line-length = 79
+
+
+[tool.ruff]
+line-length = 79
+ignore = ["E401", "E501", "E731"]
+
+
+[tool.mypy]
+ignore_missing_imports = true
+implicit_optional = true
+
+
+[build-system]
+requires = ["setuptools>=66.1", "wheel"]
+build-backend = "setuptools.build_meta"
