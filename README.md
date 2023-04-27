@@ -104,9 +104,9 @@ in the config file.
 
 ```sh
 $ docwatch -p foo.md
-pandoc -F pandoc-citeproc -V documentclass=scrartcl -V pagesize=a4 -V
-colorlinks=true -V linkcolor=red -V urlcolor=blue -V citecolor=green -V
-link-citations=true --pdf-engine=pdflatex -V geometry:margin=2cm,bottom=3cm -o
+pandoc -V documentclass=scrartcl -V pagesize=a4 -V colorlinks=true -V
+linkcolor=red -V urlcolor=blue -V citecolor=green -V link-citations=true
+--pdf-engine=pdflatex -V geometry:margin=2cm,bottom=3cm --citeproc -o
 TARGET.pdf foo.md
 ```
 
@@ -159,7 +159,9 @@ pdf_viewer=xdg-open
 
 filters=
     pandoc-xnos
-    pandoc-citeproc
+
+# default
+##citeproc=True
 
 latex_options=
     geometry:margin=1.5cm
@@ -243,8 +245,8 @@ We cite a reference [@knuth1997] using the BibTeX key, which is the
 same as `\cite{knuth1997}` in LaTeX.
 ```
 
-You can process this by adding the [pandoc-citeproc] filter to the config
-file's filter list.
+You can process this by setting the `pandoc.citeproc=True` option in the
+config file, which will imply [`pandoc --citeproc`][citeproc].
 
 
 Cross-references
@@ -290,16 +292,16 @@ not exist.
 Missing filters
 ---------------
 
-When none of `pandoc-citeproc` or the `pandoc-xnos` filters are used, then
-cite/ref syntax such as `[@knuth1997]` `+@eq:foo` is just rendered as is
-without error.
+When the option `pandoc.citeproc=False` and the `pandoc-xnos` filters are
+*not* used, then cite/ref syntax such as `[@knuth1997]` `+@eq:foo` is just
+rendered as is without error.
 
-pandoc-citeproc & bibliography
-------------------------------
+`pandoc --citeproc` & bibliography
+----------------------------------
 
 When the bibliography file is specified by a relative path such as `lit.bib` or
 `../other/dir/lit.bib`, then `docwatch` must be started from the source file's
-directory such that `pandoc-citeproc` can resolve the path (at least when using
+directory such that `pandoc --citeproc` can resolve the path (at least when using
 LaTeX under the hood). Alternatively use an absolute path. The same goes for
 image paths, by the way.
 
@@ -400,7 +402,6 @@ Extending
   really no need to do that
 
 
-[pandoc-citeproc]: https://github.com/jgm/pandoc-citeproc
 [pandoc-crossref]: https://github.com/lierdakil/pandoc-crossref
 [pandoc-xons]: https://github.com/tomduck/pandoc-xnos
 [latexmk]: https://mg.readthedocs.io/latexmk.html
@@ -416,3 +417,4 @@ Extending
 [gl-math]: https://docs.gitlab.com/ee/user/markdown.html#math
 [hedgedoc]: https://hedgedoc.org
 [hackmd]: https://hackmd.io
+[citeproc]: https://pandoc.org/MANUAL.html#citations

@@ -55,10 +55,12 @@ class PandocToPDFConverter(PandocConverter):
 
     def __init__(self, *args, **kwds):
         super().__init__(*args, **kwds)
-        self.options += f"--pdf-engine={self.conf_dct['pdf_engine']} "
+        self.options += f" --pdf-engine={self.conf_dct['pdf_engine']}"
         _latex_options = self.conf_dct["latex_options"].strip().split()
-        latex_options = " ".join(f"-V {opt}" for opt in _latex_options)
+        latex_options = " " + " ".join(f"-V {opt}" for opt in _latex_options)
         self.options += latex_options
+        if self.conf_dct["citeproc"]:
+            self.options += " --citeproc"
 
         # We need to use a suffix self.tgt_ext = 'pdf' here in the PDF case
         # b/c of the quirky pandoc behavior that in order to produce a PDF by

@@ -218,7 +218,7 @@ The `+@eq:foo` syntax with `+` works only with `pandoc-xnos`. In
 
 # BibTeX
 
-Using `pandoc-citeproc`:
+Using `pandoc --citeproc`:
 
 ref syntax | result
 -|-
