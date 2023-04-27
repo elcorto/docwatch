@@ -7,9 +7,6 @@ from .subproc import run_cmd
 
 
 class PandocConverter:
-    # For now pypandoc would be overkill here. Re-visit should we plan to
-    # support arbitrary input and output formats. Then pypandoc's format
-    # handling might come in handy.
     options = ""
 
     # pdf, rst, md, markdown, ..., w/o the leading "."
@@ -28,6 +25,8 @@ class PandocConverter:
         if self.tgt_ext != "":
             assert tgt.endswith(self.tgt_ext)
         self.conf_dct = conf[self.conf_section]
+        if self.conf_dct["citeproc"]:
+            self.options += " --citeproc"
 
     @cached_property
     def cmd(self):
@@ -60,8 +59,6 @@ class PandocToPDFConverter(PandocConverter):
         _latex_options = self.conf_dct["latex_options"].strip().split()
         latex_options = " " + " ".join(f"-V {opt}" for opt in _latex_options)
         self.options += latex_options
-        if self.conf_dct["citeproc"]:
-            self.options += " --citeproc"
 
         # We need to use a suffix self.tgt_ext = 'pdf' here in the PDF case
         # b/c of the quirky pandoc behavior that in order to produce a PDF by
