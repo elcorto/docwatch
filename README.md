@@ -202,7 +202,14 @@ Dependencies
 Filters
 =======
 
-We support [pandoc filters] (`filters` config option).
+We support [pandoc filters] (`filters` config option), which are executables
+that process text. From the `pandoc` docs:
+
+A "filter" is a program that modifies the AST, between the reader and the writer.
+
+```
+INPUT --reader--> AST --filter--> AST --writer--> OUTPUT
+```
 
 pandocfilters
 -------------
@@ -224,11 +231,9 @@ markdown and LaTeX: `$...$`).
 
     $`E= m\,c^2`$
 
-GitHub does not support math in markdown at all, AFAIK.
-
-Note that the Debian package `python3-pandocfilters` as well as the `pip`
-package `pandocfilters` don't contain the GitLab filter for some reason
-(packaging bug?), so make sure to grab the GitHub version.
+Note that while the Debian package `python3-pandocfilters` contains the
+example scripts, the `pypi` package `pandocfilters` doesn't. So grab the GitHub
+version if you want them.
 
 Bib(La)TeX
 ----------
@@ -266,7 +271,7 @@ Also works for figures `{#fig:foo}` and tables `{#tbl:foo}`.
 
 Both filters have slightly different syntax, but the example here should work
 in both. We recommend `pandoc-xons`, which has nice support for naming
-references automatically, e.g. `+@eq:foo` becomes "eq. 1" instead just "1".
+references automatically, e.g. `+@eq:foo` becomes "eq. 1" instead of just "1".
 
 Please see also [examples/md.md] for much more, such as customizations
 settings in the metadata header (e.g. `xnos-capitalise`).
@@ -322,12 +327,12 @@ for a single, self-contained TeX file just do
 $ docwatch foo.tex
 ```
 
-which will use `pandoc -o foo.pdf foo.tex`. However, TeX projects
-usually have a `main.tex` and many source files included in main, so the
-`docwatch` model (open and render one single file) doesn't apply here. In this
-case, it makes sense use something like [latexmk] with make-like behavior to
-watch all `*.tex` files. Furthermore, [latexmk] has its own preview mode
-(`latexmk -pvc`)!
+which will use `pandoc -o foo.pdf foo.tex`. However, TeX projects usually have
+a `main.tex` and many source files included in main, so the `docwatch` model
+(open and render one single file) doesn't apply here. In this case, it makes
+sense to use something like [latexmk] with make-like behavior to watch all
+`*.tex` files. Furthermore, [latexmk] has its own preview mode (`latexmk
+-pvc`)!
 
 You may need to define the pdf viewer:
 
@@ -346,23 +351,48 @@ $ latexmk -pdf -pvc main.tex
 $ vim src/chapter_foo.tex
 ```
 
-A short Makefile can be handy as well, for instance when using the [minted]
-source code highlighter.
+A short `Makefile` and a `.latexmkrc` can be handy as well, for instance when
+using the [minted] source code highlighter.
+
+`.latexmkrc`:
+
+```perl
+# run bibtex or biber, clean up .bbl files
+$bibtex_use = 2;
+
+# latexmk -pdf
+$pdf_mode = 1;
+
+# --shell-escape b/c of minted package
+# xelatex b/c of font stuff
+$pdflatex = "xelatex -interaction=errorstopmode -file-line-error -shell-escape %O %S";
+
+push @generated_exts, "bak", "bbl", "run.xml", "nav", "snm", "vrb", "synctex.*"
+```
+
+`Makefile`:
 
 ```make
-all:
-    # --shell-escape b/c of minted package
-    latexmk -pdf -pvc -pdflatex="pdflatex --shell-escape %O %S" main.tex
+main=main.tex
 
+# Default
+all: $(main)
+    latexmk $<
+
+# Build, watch, rebuild and open target in PDF viewer.
+preview: $(main)
+    latexmk -pvc $<
+
+# Cleanup
 clean: _restclean
     latexmk -c
 
 allclean: _restclean
     latexmk -C
 
+# Seems like latexmk's "push @generated_exts" doesn't treat directories.
 _restclean:
     rm -rf _minted-*
-    rm -f *.bak
 ```
 
 Related projects
@@ -409,7 +439,7 @@ Extending
 [pandoc]: https://pandoc.org
 [examples/md.md]: https://github.com/elcorto/docwatch/blob/master/examples/md.md
 [examples/docwatch.conf]: https://github.com/elcorto/docwatch/blob/master/examples/docwatch.conf
-[pyini]: https://docs.python.org/3.8/library/configparser.html
+[pyini]: https://docs.python.org/3/library/configparser.html
 [minted]: https://www.ctan.org/pkg/minted
 [pandoc filters]: https://pandoc.org/filters.html
 [pandocfilters-gh]: https://github.com/jgm/pandocfilters
