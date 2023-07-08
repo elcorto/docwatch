@@ -188,7 +188,13 @@ Install
 
 ```sh
 $ git clone ...
-$ pip install [-e] .
+$ pip install -e .
+```
+
+Also install all `pandoc-xnos` filters:
+
+```sh
+$ pip install -e ".[filters-xnos]"
 ```
 
 Dependencies
