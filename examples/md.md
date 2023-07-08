@@ -113,7 +113,7 @@ Table markup doesn't need to match column width as in rst. Nice!
 |-|-|
 |col 1| col 2    |
 
-Table: caption 1
+Table: caption 1 {#tbl:table_with_outer}
 
 
 We can even leave the outer pipes off!!
@@ -122,7 +122,10 @@ a | table | w/o | outer | pipes
 -|-|-|-|-
 x | y | xxxxx | yyyyyyyyyyyyyyyyyyyyyyyy | zzzzzzz
 
-Table: caption 2
+Table: caption 2 {#tbl:table_no_outer}
+
+Note however that since some `pandoc-xnos` version (checked 2023-07), tables
+and figures *must* have a caption *and* a label, else the build fails.
 
 # Math
 
@@ -204,6 +207,7 @@ ref syntax | result
 |
 `+@tbl:a_table`         | +@tbl:a_table
 
+Table: ref syntax xnos {#tbl:ref_syntax_xnos}
 
 ## "plus syntax"
 
@@ -240,3 +244,5 @@ ref syntax | result
 `[@focker_2019; Sec. 42]`   | [@focker_2019; Sec. 42]
 `[@focker_2019; 23]`        | [@focker_2019; 23]
 `[@focker_2019; arb. text]` | [@focker_2019; arb. text]
+
+Table: ref syntax citeproc {#tbl:ref_syntax_citeproc}
