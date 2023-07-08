@@ -217,29 +217,28 @@ A "filter" is a program that modifies the AST, between the reader and the writer
 INPUT --reader--> AST --filter--> AST --writer--> OUTPUT
 ```
 
-pandocfilters
--------------
+pandocfilters package
+---------------------
 
 The [pandocfilters][pandocfilters-gh] package has a collection of example
 filter scripts.
 
+Use
+
+```dosini
+[pandoc]
+
+filters=
+    /path/to/pandocfilters/examples/gitlab_markdown.py
+    other-filter-here
+```
+
+in `docwatch.conf` to activate them.
+
 Especially the [GitLab markdown filter][pandocfilters-gh-gitlab] lets you
-render [GitLab style math][gl-math]. See [examples/docwatch.conf] for how to
-activate that filter. GitLab style math comes in two forms. Use this to create
-equations on a new line (`pandoc` markdown and LaTeX: `$$...$$`)
+render [GitLab style math][gl-math].
 
-    ```math
-    E = m\,c^2
-    ```
-
-or this quirky syntax for inline (note the backticks in ``$`...`$``, pandoc
-markdown and LaTeX: `$...$`).
-
-    $`E= m\,c^2`$
-
-Note that while the Debian package `python3-pandocfilters` contains the
-example scripts, the `pypi` package `pandocfilters` doesn't. So grab the GitHub
-version if you want them.
+See also [examples/docwatch.conf].
 
 Bib(La)TeX
 ----------
@@ -268,6 +267,7 @@ cross-referencing.
 
 ```
 Here be math
+
 $$\alpha = \int\sin(x)\,\Gamma(\phi)\,d\phi$$ {#eq:foo}
 
 which we can reference in @eq:foo.
