@@ -155,6 +155,9 @@ The config file is in [Python configparser / DOS ini][pyini] format. See
 editor=vim
 pdf_viewer=xdg-open
 
+# File with text to be included at the start of a new file. Optional.
+##template_file=/path/to/template.yml
+
 [pandoc]
 
 filters=

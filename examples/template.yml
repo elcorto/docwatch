@@ -1,0 +1,15 @@
+---
+reference-section-title: Refs
+link-citation: true
+
+xnos-capitalise: true
+tablenos-plus-name: Tab.
+
+header-includes:
+- |
+  ```{=latex}
+  \usepackage{bm}
+  \usepackage{xspace}
+  \newcommand{\ve}[1]{\ensuremath{\bm{\mathit{#1}}}\xspace}
+  ```
+---
