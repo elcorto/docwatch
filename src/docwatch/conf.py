@@ -21,7 +21,7 @@ conf_default["pandoc"] = dict(
     citeproc=True,
 )
 
-conf_fn = os.path.join(os.environ["HOME"], ".config/docwatch.conf")
+conf_fn = os.path.join(os.environ["HOME"], ".config/docwatch/docwatch.conf")
 
 
 def get_conf():

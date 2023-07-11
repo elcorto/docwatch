@@ -12,7 +12,7 @@ Features:
 * open source file in an editor
 * watch source for changes and re-build automatically
 
-Optional config file `$HOME/.config/docwatch.conf`.
+Optional config file `$HOME/.config/docwatch/docwatch.conf`.
 
 The main use case of this tool is to be a previewer for text markup source
 documents (e.g. markdown, rst, tex, .. any format that `pandoc` supports) that
