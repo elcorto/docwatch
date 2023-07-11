@@ -12,6 +12,7 @@ conf_default["DEFAULT"] = dict(
     editor=os.environ.get("EDITOR", "vim"),
     pdf_viewer="xdg-open",
     logfile="/tmp/docwatch.log",
+    template_file="",
 )
 
 conf_default["pandoc"] = dict(
@@ -22,6 +23,17 @@ conf_default["pandoc"] = dict(
 )
 
 conf_fn = os.path.join(os.environ["HOME"], ".config/docwatch/docwatch.conf")
+
+
+def read_template(template_file: str) -> str:
+    if len(template_file.strip()) == 0:
+        return ""
+    if os.path.isabs(template_file):
+        pth = template_file
+    else:
+        pth = os.path.join(os.path.dirname(conf_fn), template_file)
+    with open(pth) as fd:
+        return fd.read()
 
 
 def get_conf():

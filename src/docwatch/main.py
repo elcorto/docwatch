@@ -7,7 +7,7 @@ import threading
 import time
 
 from .converters import PandocToPDFConverter
-from .conf import conf
+from .conf import conf, read_template
 from .subproc import run_cmd
 
 
@@ -111,8 +111,11 @@ def main():
 
         if os.stat(fd_src.name).st_size == 0:
             fd_src.write(
-                f"Hi, I'm your new file '{os.path.basename(fd_src.name)}'. "
-                f"Delete this line and start hacking."
+                read_template(conf_dct["template_file"])
+                + (
+                    f"\nHi, I'm your new file '{os.path.basename(fd_src.name)}'. "
+                    f"Delete this line and start hacking."
+                )
             )
             # Actually write to file now before we hand fd_src down.
             fd_src.flush()
