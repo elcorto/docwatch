@@ -71,10 +71,10 @@ def main():
     # That is (should be :)) the only pandoc-specific hard coded line.
     converter = PandocToPDFConverter
 
-    conf_dct = conf[converter.conf_section]
+    cv_conf = conf[converter.conf_section]
 
-    if os.path.exists(conf_dct["logfile"]):
-        os.unlink(conf_dct["logfile"])
+    if os.path.exists(cv_conf["logfile"]):
+        os.unlink(cv_conf["logfile"])
 
     # src and extra_opts are the same in every place where we call
     # converter(...). Better use smth like
@@ -111,7 +111,7 @@ def main():
 
         if os.stat(fd_src.name).st_size == 0:
             fd_src.write(
-                read_template(conf_dct["template_file"])
+                read_template(cv_conf["template_file"])
                 + (
                     f"\nHi, I'm your new file '{os.path.basename(fd_src.name)}'. "
                     f"Delete this line and start hacking."
@@ -121,7 +121,7 @@ def main():
             fd_src.flush()
 
         def target_viewer():
-            run_cmd(f"{conf_dct['pdf_viewer']} {cv.tgt}")
+            run_cmd(f"{cv_conf['pdf_viewer']} {cv.tgt}")
 
         def target_watch_convert():
             try:
@@ -152,5 +152,5 @@ def main():
             )
             thread_watch_convert.start()
             subprocess.run(
-                f"{conf_dct['editor']} {cv.src}", shell=True, check=True
+                f"{cv_conf['editor']} {cv.src}", shell=True, check=True
             )

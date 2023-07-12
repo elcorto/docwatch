@@ -32,7 +32,7 @@ class PandocConverter:
     def cmd(self):
         _filters = [
             os.path.expanduser(p)
-            for p in self.conf_dct["filters"].strip().split()
+            for p in self.cv_conf["filters"].strip().split()
         ]
         filters = " ".join(f"-F {ff}" for ff in _filters)
         cmd = f"pandoc {filters} {self.options} {self.extra_opts} {self.src}"
@@ -55,8 +55,8 @@ class PandocToPDFConverter(PandocConverter):
 
     def __init__(self, *args, **kwds):
         super().__init__(*args, **kwds)
-        self.options += f" --pdf-engine={self.conf_dct['pdf_engine']}"
-        _latex_options = self.conf_dct["latex_options"].strip().split()
+        self.options += f" --pdf-engine={self.cv_conf['pdf_engine']}"
+        _latex_options = self.cv_conf["latex_options"].strip().split()
         latex_options = " " + " ".join(f"-V {opt}" for opt in _latex_options)
         self.options += latex_options
 
