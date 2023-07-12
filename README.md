@@ -164,7 +164,7 @@ filters=
     pandoc-xnos
 
 # default
-##citeproc=True
+##citeproc=true
 
 latex_options=
     geometry:margin=1.5cm
@@ -258,7 +258,7 @@ We cite a reference [@knuth1997] using the BibTeX key, which is the
 same as `\cite{knuth1997}` in LaTeX.
 ```
 
-You can process this by setting the `pandoc.citeproc=True` option in the
+You can process this by setting the `pandoc.citeproc=true` option in the
 config file, which will imply [`pandoc --citeproc`][citeproc].
 
 
@@ -306,7 +306,7 @@ not exist.
 Missing filters
 ---------------
 
-When the option `pandoc.citeproc=False` and the `pandoc-xnos` filters are
+When the option `pandoc.citeproc=false` and the `pandoc-xnos` filters are
 *not* used, then cite/ref syntax such as `[@knuth1997]` `+@eq:foo` is just
 rendered as is without error.
 

@@ -19,7 +19,7 @@ conf_default["pandoc"] = dict(
     pdf_engine="pdflatex",
     filters="",
     latex_options="",
-    citeproc=True,
+    citeproc="true",
 )
 
 conf_fn = os.path.join(os.environ["HOME"], ".config/docwatch/docwatch.conf")

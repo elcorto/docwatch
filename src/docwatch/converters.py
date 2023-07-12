@@ -24,8 +24,8 @@ class PandocConverter:
             self.extra_opts += f" --from={src_ext}"
         if self.tgt_ext != "":
             assert tgt.endswith(self.tgt_ext)
-        self.conf_dct = conf[self.conf_section]
-        if self.conf_dct["citeproc"]:
+        self.cv_conf = conf[self.conf_section]
+        if self.cv_conf.getboolean("citeproc"):
             self.options += " --citeproc"
 
     @cached_property
