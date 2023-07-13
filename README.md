@@ -444,10 +444,10 @@ Extending
 [pandoc-crossref]: https://github.com/lierdakil/pandoc-crossref
 [pandoc-xons]: https://github.com/tomduck/pandoc-xnos
 [latexmk]: https://mg.readthedocs.io/latexmk.html
-[converters.py]: https://github.com/elcorto/docwatch/blob/master/src/docwatch/converters.py
+[converters.py]: https://github.com/elcorto/docwatch/blob/main/src/docwatch/converters.py
 [pandoc]: https://pandoc.org
-[examples/md.md]: https://github.com/elcorto/docwatch/blob/master/examples/md.md
-[examples/docwatch.conf]: https://github.com/elcorto/docwatch/blob/master/examples/docwatch.conf
+[examples/md.md]: https://github.com/elcorto/docwatch/blob/main/examples/md.md
+[examples/docwatch.conf]: https://github.com/elcorto/docwatch/blob/main/examples/docwatch.conf
 [pyini]: https://docs.python.org/3/library/configparser.html
 [minted]: https://www.ctan.org/pkg/minted
 [pandoc filters]: https://pandoc.org/filters.html
