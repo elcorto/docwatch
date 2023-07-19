@@ -10,9 +10,14 @@ tablenos-plus-name: Tab.
 header-includes:
 - |
   ```{=latex}
-  \usepackage{bm}
+  % only with lualatex or xelatex
+  \usepackage{unicode-math}
   \usepackage{xspace}
-  \newcommand{\ve}[1]{\ensuremath{\bm{\mathit{#1}}}\xspace}
+
+  % vector
+  \newcommand{\ve}[1]{\ensuremath{\symbfit{#1}}\xspace}
+  % matrix
+  \newcommand{\ma}[1]{\ensuremath{\symbfup{#1}}\xspace}
   ```
 ---
 
@@ -159,6 +164,10 @@ If not then this will be a fenced code block.
 ```
 E = m\,c^2
 ```
+
+Using definitions from the header.
+
+$$\ma A\,\ve x = \ve b$$
 
 # Labels and references
 

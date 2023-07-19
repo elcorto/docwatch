@@ -8,8 +8,13 @@ tablenos-plus-name: Tab.
 header-includes:
 - |
   ```{=latex}
-  \usepackage{bm}
+  % only with lualatex or xelatex
+  \usepackage{unicode-math}
   \usepackage{xspace}
-  \newcommand{\ve}[1]{\ensuremath{\bm{\mathit{#1}}}\xspace}
+
+  % vector
+  \newcommand{\ve}[1]{\ensuremath{\symbfit{#1}}\xspace}
+  % matrix
+  \newcommand{\ma}[1]{\ensuremath{\symbfup{#1}}\xspace}
   ```
 ---

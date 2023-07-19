@@ -104,10 +104,10 @@ in the config file.
 
 ```sh
 $ docwatch -p foo.md
-pandoc -V documentclass=scrartcl -V pagesize=a4 -V colorlinks=true -V
-linkcolor=red -V urlcolor=blue -V citecolor=green -V link-citations=true
---pdf-engine=pdflatex -V geometry:margin=2cm,bottom=3cm --citeproc -o
-TARGET.pdf foo.md
+pandoc -F pandoc-xnos -V documentclass=scrartcl -V pagesize=a4 -V
+colorlinks=true -V linkcolor=red -V urlcolor=blue -V citecolor=green -V
+link-citations=true --pdf-engine=xelatex -V geometry:margin=2cm,bottom=3cm
+--citeproc -o TARGET.pdf foo.md
 ```
 
 Less important options

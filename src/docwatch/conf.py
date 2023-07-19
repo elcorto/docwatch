@@ -16,7 +16,7 @@ conf_default["DEFAULT"] = dict(
 )
 
 conf_default["pandoc"] = dict(
-    pdf_engine="pdflatex",
+    pdf_engine="xelatex",
     filters="",
     latex_options="",
     citeproc="true",
