@@ -11,7 +11,15 @@ header-includes:
 - |
   ```{=latex}
   % only with lualatex or xelatex
+  %
+  % May need mathtools before unicode-math to make things like \underbrace
+  % render correctly in some cases.
+  %%\usepackage{mathtools}
   \usepackage{unicode-math}
+  % Restore classic computer modern roman font
+  \usepackage[olddefault]{fontsetup}
+  \DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
   \usepackage{xspace}
 
   % vector
@@ -168,6 +176,17 @@ E = m\,c^2
 Using definitions from the header.
 
 $$\ma A\,\ve x = \ve b$$
+
+## Check font stuff
+
+This
+
+$$\underbrace{\mathcal X \rightarrow \mathbb R}_{\psi}$$
+
+should look like this
+
+![Screenshot image of rendered math with correct fonts, generated with xelatex,
+unicode-math and the \TeX\ header in this file](math_fonts.png){width=20%}
 
 # Labels and references
 

@@ -9,8 +9,14 @@ header-includes:
 - |
   ```{=latex}
   % only with lualatex or xelatex
+  %
+  % May need mathtools before unicode-math to make things like \underbrace
+  % render correctly in some cases.
+  %%\usepackage{mathtools}
   \usepackage{unicode-math}
-  \usepackage{xspace}
+  % Restore classic computer modern roman font
+  \usepackage[olddefault]{fontsetup}
+  \DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
 
   % vector
   \newcommand{\ve}[1]{\ensuremath{\symbfit{#1}}\xspace}
