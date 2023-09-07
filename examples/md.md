@@ -34,6 +34,11 @@ header-includes:
 ![image w/ caption, md syntax](pic.jpg){width=50% #fig:fry-md}
 
 
+Image w/o caption
+
+![](pic.jpg){width=20%}
+
+
 \begin{figure}
     \centering
     \includegraphics[width=0.3\textwidth]{pic.jpg}
@@ -129,16 +134,12 @@ Table markup doesn't need to match column width as in rst. Nice!
 Table: caption 1 {#tbl:table_with_outer}
 
 
-We can even leave the outer pipes off!!
+We can even leave the outer pipes off!! Also we don't need captions and labels.
 
 a | table | w/o | outer | pipes
 -|-|-|-|-
 x | y | xxxxx | yyyyyyyyyyyyyyyyyyyyyyyy | zzzzzzz
 
-Table: caption 2 {#tbl:table_no_outer}
-
-Note however that since some `pandoc-xnos` version (checked 2023-07), tables
-and figures *must* have a caption *and* a label, else the build fails.
 
 # Math
 
@@ -154,7 +155,7 @@ Also plain TeX works, awesome!
     E = m\,c^2
 \end{equation}
 
-Turn off numbering.
+Turn off numbering with plain TeX: use `\begin{equation*} ... \end{equation*}`.
 
 \begin{equation*}
     E = m\,c^2
