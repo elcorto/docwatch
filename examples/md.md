@@ -10,6 +10,8 @@ tablenos-plus-name: Tab.
 header-includes:
 - |
   ```{=latex}
+  \usepackage{xspace}
+
   % only with lualatex or xelatex
   %
   % May need mathtools before unicode-math to make things like \underbrace
@@ -20,11 +22,24 @@ header-includes:
   \usepackage[olddefault]{fontsetup}
   \DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
 
-  \usepackage{xspace}
+  % For \IfInteger
+  \usepackage{xstring}
 
-  % vector
-  \newcommand{\ve}[1]{\ensuremath{\symbfit{#1}}\xspace}
-  % matrix
+  % vector: bold italic (latin, greek) or slanted (digits)
+  %
+  % unicode-math can't do bold slanted digits, so special-case
+  % \ve <digit>
+  %
+  % Thanks: https://tex.stackexchange.com/a/590936
+  \newcommand{\ve}[1]{%
+    \IfInteger{#1}{%
+      \textsl{\textbf{#1}}\xspace%
+      }{%
+      \ensuremath{\symbfit{#1}}\xspace%
+    }
+  }
+
+  % matrix: bold upright
   \newcommand{\ma}[1]{\ensuremath{\symbfup{#1}}\xspace}
   ```
 ---
@@ -178,16 +193,20 @@ Using definitions from the header.
 
 $$\ma A\,\ve x = \ve b$$
 
+A vector of zeros as bold and slanted digit: $\ve 0$
+
 ## Check font stuff
 
 This
 
 $$\underbrace{\mathcal X \rightarrow \mathbb R}_{\psi}$$
 
-should look like this
+should look like +@fig:tex-screen.
 
 ![Screenshot image of rendered math with correct fonts, generated with xelatex,
-unicode-math and the \TeX\ header in this file](math_fonts.png){width=20%}
+unicode-math and the \TeX\ header in this file](math_fonts.png){width=20%
+#fig:tex-screen}
+
 
 # Labels and references
 

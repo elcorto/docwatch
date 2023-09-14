@@ -8,6 +8,8 @@ tablenos-plus-name: Tab.
 header-includes:
 - |
   ```{=latex}
+  \usepackage{xspace}
+
   % only with lualatex or xelatex
   %
   % May need mathtools before unicode-math to make things like \underbrace
@@ -18,9 +20,24 @@ header-includes:
   \usepackage[olddefault]{fontsetup}
   \DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
 
-  % vector
-  \newcommand{\ve}[1]{\ensuremath{\symbfit{#1}}\xspace}
-  % matrix
+  % For \IfInteger
+  \usepackage{xstring}
+
+  % vector: bold italic (latin, greek) or slanted (digits)
+  %
+  % unicode-math can't do bold slanted digits, so special-case
+  % \ve <digit>
+  %
+  % Thanks: https://tex.stackexchange.com/a/590936
+  \newcommand{\ve}[1]{%
+    \IfInteger{#1}{%
+      \textsl{\textbf{#1}}\xspace%
+      }{%
+      \ensuremath{\symbfit{#1}}\xspace%
+    }
+  }
+
+  % matrix (bold upright)
   \newcommand{\ma}[1]{\ensuremath{\symbfup{#1}}\xspace}
   ```
 ---
