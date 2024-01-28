@@ -10,6 +10,12 @@ tablenos-plus-name: Tab.
 header-includes:
 - |
   ```{=latex}
+  % https://github.com/elcorto/docwatch/issues/2
+  \usepackage{hyperref}
+  % "capitalise" is what "xnos-capitalise: true" does. If you don't use this
+  % setting, then just \usepackage{cleveref}.
+  \usepackage[capitalise]{cleveref}
+
   \usepackage{xspace}
 
   % only with lualatex or xelatex
