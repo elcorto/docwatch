@@ -87,9 +87,11 @@ def main():
     # converter.conf_section)
     if args.print_command:
         cv = converter(
-            src=args.source_file
-            if args.source_file is not None
-            else "SOURCE_FILE",
+            src=(
+                args.source_file
+                if args.source_file is not None
+                else "SOURCE_FILE"
+            ),
             tgt=f"TARGET.{converter.tgt_ext}",
             extra_opts=args.extra_opts,
             src_ext=args.source_format,
