@@ -52,8 +52,8 @@ def main():
         default="",
         help="""Additional options to pass to the converter, e.g. for pandoc:
                 %(prog)s -o '--bibliography=/path/to/lit.bib' SOURCE_FILE. Mind
-                the quoting. Some shells mess up quoting in the short form -f,
-                using the long form as in --extra-opts='-f rst' then helps.""",
+                the quoting. Some shells mess up quoting, then use an equal
+                sign: -o='...' or --extra-opts='...'.""",
     )
     parser.add_argument(
         "-f",

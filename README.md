@@ -35,7 +35,7 @@ usage: docwatch [-h] [-p] [-c [TARGET]] [-o EXTRA_OPTS] [-f SOURCE_FORMAT]
 positional arguments:
   SOURCE_FILE
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -p, --print-command   Print converter (e.g. pandoc) command that would be
                         executed and exit.
@@ -48,8 +48,8 @@ optional arguments:
                         Additional options to pass to the converter, e.g. for
                         pandoc: docwatch -o '--bibliography=/path/to/lit.bib'
                         SOURCE_FILE. Mind the quoting. Some shells mess up
-                        quoting in the short form -f, using the long form as
-                        in --extra-opts='-f rst' then helps.
+                        quoting, then use an equal sign: -o='...' or --extra-
+                        opts='...'.
   -f SOURCE_FORMAT, --source-format SOURCE_FORMAT
                         Format of SOURCE_FILE (file type, typically file
                         extension). Same as docwatch --extra-opts='-f
