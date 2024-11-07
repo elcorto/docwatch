@@ -2,6 +2,7 @@ import datetime
 import re
 import subprocess
 import traceback
+from typing import Sequence
 
 from .conf import conf
 
@@ -13,15 +14,15 @@ def write_to_logfile(txt: str):
         fd.write(txt)
 
 
-def run_cmd(cmd: str, onerror="log"):
+def run_cmd(cmd: Sequence, onerror="log"):
     assert onerror in (
         valid := ["log", "fail"]
     ), f"{onerror=} not one of {valid}"
     try:
         proc = subprocess.run(
-            re.sub(r"\s{2,}", " ", cmd.strip(), flags=re.M),
+            cmd,
             check=True,
-            shell=True,
+            shell=False,
             stderr=subprocess.STDOUT,
             stdout=subprocess.PIPE,
         )

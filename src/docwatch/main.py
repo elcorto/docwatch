@@ -96,7 +96,7 @@ def main():
             extra_opts=args.extra_opts,
             src_ext=args.source_format,
         )
-        print(cv.cmd)
+        print(" ".join(cv.cmd))
         return
 
     with tempfile.NamedTemporaryFile(
@@ -123,7 +123,7 @@ def main():
             fd_src.flush()
 
         def target_viewer():
-            run_cmd(f"{cv_conf['pdf_viewer']} {cv.tgt}")
+            run_cmd([cv_conf["pdf_viewer"], cv.tgt])
 
         def target_watch_convert():
             try:
@@ -154,5 +154,5 @@ def main():
             )
             thread_watch_convert.start()
             subprocess.run(
-                f"{cv_conf['editor']} {cv.src}", shell=True, check=True
+                [cv_conf["editor"], cv.src], check=True, shell=False
             )
