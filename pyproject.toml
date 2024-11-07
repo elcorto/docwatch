@@ -36,7 +36,7 @@ line-length = 79
 
 [tool.ruff]
 line-length = 79
-ignore = ["E401", "E501", "E731"]
+lint.ignore = ["E401", "E501", "E731"]
 
 
 [tool.mypy]
