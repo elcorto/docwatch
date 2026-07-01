@@ -16,15 +16,22 @@ header-includes:
 
   \usepackage{xspace}
 
-  % only with lualatex or xelatex
+  % unicode-math: only with lualatex or xelatex
   %
   % May need mathtools before unicode-math to make things like \underbrace
   % render correctly in some cases.
   %%\usepackage{mathtools}
   \usepackage{unicode-math}
-  % Restore classic computer modern roman font
-  \usepackage[olddefault]{fontsetup}
+
+  % unicode-math changes some fonts, revert that.
+  %
+  % Classic Computer Modern calligraphic
   \DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+  %
+  % Classic AMS blackboard bold
+  %%\let\mathbb\relax  % if TeX complains about redef
+  \DeclareSymbolFont{AMSb}{U}{msb}{m}{n}
+  \DeclareSymbolFontAlphabet{\mathbb}{AMSb}
 
   % For \IfInteger
   \usepackage{xstring}
