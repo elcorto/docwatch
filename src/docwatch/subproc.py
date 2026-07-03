@@ -15,9 +15,9 @@ def write_to_logfile(txt: str):
 
 
 def run_cmd(cmd: Sequence, onerror="log"):
-    assert onerror in (
-        valid := ["log", "fail"]
-    ), f"{onerror=} not one of {valid}"
+    assert onerror in (valid := ["log", "fail"]), (
+        f"{onerror=} not one of {valid}"
+    )
     try:
         proc = subprocess.run(
             cmd,
