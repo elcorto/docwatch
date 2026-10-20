@@ -26,14 +26,16 @@ header-includes:
   \usepackage{unicode-math}
 
   % unicode-math changes some fonts, revert that.
+  % Same output as \usepackage[olddefault]{fontsetup}, but compiles faster.
   %
+  % Math (regular): plain math, e.g. $O(f)$, \sum
+  \setmathfont[CharacterVariant=2]{NewCMMath-Regular.otf}
+  % Math (bold): \symbfit, \symbfup, e.g. \ve y
+  \setmathfont[version=bold,CharacterVariant=2]{NewCMMath-Bold.otf}
+  % Math (script): \mathscr{L}, \mathbfscr
+  \setmathfont[range={\mathscr,\mathbfscr},StylisticSet=1,CharacterVariant=2]{NewCMMath-Regular.otf}
   % Classic Computer Modern calligraphic
   \DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
-  %
-  % Classic AMS blackboard bold
-  %%\let\mathbb\relax  % if TeX complains about redef
-  \DeclareSymbolFont{AMSb}{U}{msb}{m}{n}
-  \DeclareSymbolFontAlphabet{\mathbb}{AMSb}
 
   % For \IfInteger
   \usepackage{xstring}
