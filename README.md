@@ -30,6 +30,7 @@ Usage
 
 ```
 usage: docwatch [-h] [-p] [-c [TARGET]] [-o EXTRA_OPTS] [-f SOURCE_FORMAT]
+                [-t]
                 [SOURCE_FILE]
 
 positional arguments:
@@ -39,7 +40,7 @@ options:
   -h, --help            show this help message and exit
   -p, --print-command   Print converter (e.g. pandoc) command that would be
                         executed and exit.
-  -c [TARGET], --convert [TARGET]
+  -c, --convert [TARGET]
                         Convert mode. Only run converter (see --print-command)
                         and produce TARGET (optional, temp file used if
                         omitted, use 'docwatch -c -- SOURCE_FILE' or 'docwatch
@@ -57,6 +58,12 @@ options:
                         Else (default) we use pandoc's automatic detection.
                         Use in combination with omitted SOURCE_FILE, e.g.
                         "docwatch -f rst" to edit a temp rst file.
+  -t, --temp-source-copy
+                        Edit a temp copy of SOURCE_FILE (e.g. on slow file
+                        systems). When the editor closes, the copy is written
+                        back to SOURCE_FILE if it changed. The previous
+                        version is kept as SOURCE_FILE.bak-
+                        docwatch-<timestamp>.
 ```
 
 This will open `foo.md` in your text editor (config file: `editor`), build a
@@ -97,6 +104,17 @@ without arguments. This will use a temp source file (default: markdown). Use
 
 ```sh
 $ docwatch -f rst
+```
+
+On slow file systems (e.g. sshfs), editing `foo.md` directly can be sluggish.
+With `-t` docwatch copies `foo.md` to a fast temp file, edits and rebuilds
+use that copy, and when the editor closes the copy is written back to `foo.md`
+if it changed. The old version is kept next to it as
+`foo.md.bak-docwatch-<timestamp>`. If the write-back fails, the temp file is
+kept and its path is printed.
+
+```sh
+$ docwatch -t foo.md
 ```
 
 Print the `pandoc` command that is executed, which includes all options defined

@@ -1,26 +1,76 @@
 import argparse
+import contextlib
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import threading
 import time
+from datetime import datetime, UTC
 
 from .converters import PandocToPDFConverter
 from .conf import conf, read_template
 from .subproc import run_cmd
 
 
-def get_src_context(src: str = None, src_ext: str = ""):
+def get_src_context(
+    src: str = None, src_ext: str = "", temp_copy: bool = False
+):
     _src_ext = src_ext if src_ext != "" else "markdown"
     if src is None:
         return tempfile.NamedTemporaryFile(suffix=f".{_src_ext}", mode="w+")
+    elif temp_copy:
+        return get_temp_copy_context(src)
     else:
         return open(os.path.expanduser(src), mode="a+")
 
 
 def get_mtime(fn: str):
     return os.stat(fn).st_mtime
+
+
+@contextlib.contextmanager
+def get_temp_copy_context(src: str):
+    src = os.path.expanduser(src)
+    orig = b""
+    if os.path.exists(src):
+        with open(src, "rb") as fd:
+            orig = fd.read()
+    tmp_fn = os.path.join(tempfile.mkdtemp(), os.path.basename(src))
+    with open(tmp_fn, "wb") as fd:
+        fd.write(orig)
+    try:
+        with open(tmp_fn, "a+") as fd:
+            yield fd
+    finally:
+        sync_back(tmp_fn, src, orig)
+
+
+def sync_back(tmp_fn: str, src: str, orig: bytes):
+    with open(tmp_fn, "rb") as fd:
+        new = fd.read()
+    try:
+        if new != orig:
+            if os.path.exists(src):
+                stamp = datetime.now(UTC).strftime(
+                    "%Y-%m-%dT%H:%M:%S.%fZ"
+                )
+                bak = f"{src}.bak-docwatch-{stamp}"
+                while os.path.exists(bak):  # unlikely but safe
+                    bak += "~"
+                shutil.copy2(src, bak)
+                print(f"docwatch: backup saved as '{bak}'", file=sys.stderr)
+            with open(src, "wb") as fd:
+                fd.write(new)
+    except OSError as exc:
+        print(
+            f"docwatch: sync to '{src}' failed ({exc}), edits kept in "
+            f"'{tmp_fn}'",
+            file=sys.stderr,
+        )
+        return
+    shutil.rmtree(os.path.dirname(tmp_fn))
 
 
 def main():
@@ -66,7 +116,21 @@ def main():
                 SOURCE_FILE, e.g. "%(prog)s -f rst" to edit a temp rst
                 file.""",
     )
+    parser.add_argument(
+        "-t",
+        "--temp-source-copy",
+        action="store_true",
+        default=False,
+        help="""Edit a temp copy of SOURCE_FILE (e.g. on slow file systems). When
+                the editor closes, the copy is written back to SOURCE_FILE if it
+                changed. The previous version is kept as
+                SOURCE_FILE.bak-docwatch-<timestamp>.""",
+    )
     args = parser.parse_args()
+    if args.temp_source_copy and (
+        args.source_file is None or args.convert is not None
+    ):
+        parser.error("-t/--temp-source-copy requires SOURCE_FILE and no -c")
 
     # That is (should be :)) the only pandoc-specific hard coded line.
     converter = PandocToPDFConverter
@@ -102,7 +166,9 @@ def main():
     with tempfile.NamedTemporaryFile(
         suffix=f".{converter.tgt_ext}"
     ) as fd_tgt, get_src_context(
-        src=args.source_file, src_ext=args.source_format
+        src=args.source_file,
+        src_ext=args.source_format,
+        temp_copy=args.temp_source_copy,
     ) as fd_src:
         cv = converter(
             src=fd_src.name,
