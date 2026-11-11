@@ -107,11 +107,12 @@ $ docwatch -f rst
 ```
 
 On slow file systems (e.g. sshfs), editing `foo.md` directly can be sluggish.
-With `-t` docwatch copies `foo.md` to a fast temp file, edits and rebuilds
+With `-t`, `docwatch` copies `foo.md` to a local temp file, edits and rebuilds
 use that copy, and when the editor closes the copy is written back to `foo.md`
 if it changed. The old version is kept next to it as
 `foo.md.bak-docwatch-<timestamp>`. If the write-back fails, the temp file is
-kept and its path is printed.
+kept and its path is printed. Relative paths inside the document resolve from
+the current directory, see [Relative paths](#relative-paths-bibliography-images).
 
 ```sh
 $ docwatch -t foo.md
@@ -328,14 +329,39 @@ When the option `pandoc.citeproc=false` and the `pandoc-xnos` filters are
 *not* used, then cite/ref syntax such as `[@knuth1997]` `+@eq:foo` is just
 rendered as is without error.
 
-`pandoc --citeproc` & bibliography
-----------------------------------
+Relative paths (bibliography, images)
+-------------------------------------
 
 When the bibliography file is specified by a relative path such as `lit.bib` or
 `../other/dir/lit.bib`, then `docwatch` must be started from the source file's
 directory such that `pandoc --citeproc` can resolve the path (at least when using
-LaTeX under the hood). Alternatively use an absolute path. The same goes for
-image paths, by the way.
+LaTeX under the hood). Specifically, this doesn't work:
+
+```sh
+$ cd /path/to/docwatch
+$ docwatch examples/md.md
+```
+
+But this does:
+
+```sh
+$ cd /path/to/docwatch/examples
+$ docwatch md.md
+```
+
+Alternatively use an absolute path (e.g. `/path/to/docwatch/examples/lit.bib`).
+The same goes for image paths, by the way. This also holds with `-t`, since the
+temp source copy lives in `/tmp/<random string>/md.md`, while `pandoc` resolves
+relative paths w.r.t. its CWD.
+
+If you start `docwatch` from another directory, then one solution is to tell
+`pandoc` where to look with `--resource-path`, e.g. when starting from the repo
+root:
+
+```sh
+$ cd /path/to/docwatch
+$ docwatch -o='--resource-path=examples' examples/md.md
+```
 
 Using many filters to replicate LaTeX functionality
 ---------------------------------------------------
